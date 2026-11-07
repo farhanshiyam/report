@@ -1,0 +1,3865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1f4e79">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>RGCE SparkDesk</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --bg: #f4f5f7;
+  --panel: #ffffff;
+  --panel-alt: #f6f8fa;
+  --border: #d0d7de;
+  --border-strong: #9ca3af;
+  --text: #1f2328;
+  --muted: #57606a;
+  --link: #0969da;
+  --primary: #1f4e79;
+  --primary-hover: #163d5e;
+  --primary-light: #f0f6fc;
+  --success: #1a7f37;
+  --success-hover: #166b2e;
+  --success-bg: #dafbe1;
+  --danger: #cf222e;
+  --danger-bg: #ffebe9;
+  --warning: #bf8700;
+  --warning-bg: #fff8c5;
+  --gold: #d4a72c;
+  --input-bg: #ffffff;
+  --header-bg: #1f4e79;
+  --header-text: #ffffff;
+  --shadow-sm: 0 1px 2px rgba(31,35,40,0.06);
+  --shadow-md: 0 4px 12px rgba(31,35,40,0.10);
+  --shadow-lg: 0 8px 24px rgba(31,35,40,0.14);
+  --nav-height: 62px;
+  --header-height: 56px;
+}
+body.dark {
+  --bg: #0d1117;
+  --panel: #161b22;
+  --panel-alt: #1c2128;
+  --border: #30363d;
+  --border-strong: #484f58;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --link: #58a6ff;
+  --primary: #1f6feb;
+  --primary-hover: #388bfd;
+  --primary-light: #132030;
+  --success: #3fb950;
+  --success-hover: #56d364;
+  --success-bg: #12261e;
+  --danger: #f85149;
+  --danger-bg: #2a1314;
+  --warning: #d29922;
+  --warning-bg: #2a2010;
+  --gold: #d4a72c;
+  --input-bg: #0d1117;
+  --header-bg: #1f4e79;
+  --header-text: #ffffff;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 15px;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.2s, color 0.2s;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+input, textarea, select {
+  -webkit-user-select: text;
+  user-select: text;
+}
+a { color: var(--link); text-decoration: none; }
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--header-bg);
+  color: var(--header-text);
+  border-bottom: 3px solid var(--gold);
+  padding: 10px 14px;
+  padding-top: calc(10px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  box-shadow: var(--shadow-md);
+}
+.app-header .title-block { min-width: 0; flex: 1; }
+.app-header .app-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app-header .app-sub {
+  font-size: 11px;
+  color: #c9d1d9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.header-actions { display: flex; gap: 6px; align-items: center; }
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  position: relative;
+}
+.icon-btn:active { background: rgba(255,255,255,0.22); }
+.icon-btn i { pointer-events: none; }
+.icon-btn svg { pointer-events: none; display: block; }
+.icon-btn.tg-active { background: rgba(63,185,80,0.28); }
+.icon-btn.tg-active svg { color: #7ee787; }
+
+/* Telegram inline SVG wrapper for tool rows */
+.tg-svg-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--primary-light);
+  color: var(--primary);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+.tg-svg-icon svg { display: block; }
+
+.app-content {
+  padding-bottom: calc(var(--nav-height) + 20px + env(safe-area-inset-bottom));
+  min-height: calc(100vh - var(--header-height));
+}
+.tab-pane { display: none; }
+.tab-pane.active { display: block; animation: fadeIn 0.18s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.search-bar {
+  position: sticky;
+  top: calc(var(--header-height) + env(safe-area-inset-top));
+  z-index: 60;
+  background: var(--bg);
+  padding: 10px 12px 6px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.search-input-wrap { position: relative; flex: 1; }
+.search-input-wrap input {
+  width: 100%;
+  padding: 12px 40px 12px 42px;
+  font-size: 15px;
+  border: 1px solid var(--border-strong);
+  border-radius: 24px;
+  background: var(--panel);
+  color: var(--text);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.search-input-wrap input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(31,78,121,0.15);
+}
+.search-input-wrap .fa-search {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 15px;
+  pointer-events: none;
+}
+.search-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--panel-alt);
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.search-clear.visible { display: flex; }
+.filter-icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.filter-icon-btn.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.filter-icon-btn .dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  display: none;
+}
+.filter-icon-btn.has-filters .dot { display: block; }
+
+.filter-panel {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 12px;
+  display: none;
+  margin: 0 12px 8px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.filter-panel.open { display: block; }
+.filter-panel .filter-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.filter-panel .filter-row:last-of-type { margin-bottom: 0; }
+.filter-panel label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: 0.4px;
+  display: block;
+  margin-bottom: 4px;
+}
+.filter-panel select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--input-bg);
+  color: var(--text);
+  font-family: inherit;
+  outline: none;
+}
+.filter-panel select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(31,78,121,0.15);
+}
+.filter-actions { display: flex; gap: 8px; margin-top: 10px; }
+
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 4px 12px 10px;
+}
+.stat-mini {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 10px;
+  text-align: center;
+}
+.stat-mini .lbl {
+  font-size: 9px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.4px;
+}
+.stat-mini .val {
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+.stat-mini .val.due { color: var(--danger); }
+.stat-mini .val.paid { color: var(--success); }
+.stat-mini .val.total { color: var(--primary); }
+
+.card-list { padding: 0 12px 12px; }
+.customer-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.12s, box-shadow 0.12s;
+  position: relative;
+  overflow: hidden;
+}
+.customer-card:active {
+  transform: scale(0.985);
+  box-shadow: var(--shadow-md);
+}
+.customer-card.due { border-left: 4px solid var(--danger); }
+.customer-card.partial { border-left: 4px solid var(--warning); }
+.customer-card.paid { border-left: 4px solid var(--success); }
+.customer-card.hidden { border-left: 4px solid var(--border-strong); }
+
+.customer-card .card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.customer-card .cust-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  word-break: break-word;
+}
+.customer-card .cust-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 3px;
+  line-height: 1.35;
+}
+.customer-card .cust-meta i {
+  width: 14px;
+  text-align: center;
+  margin-right: 4px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.status-badge {
+  display: inline-block;
+  padding: 3px 9px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.status-badge.paid { background: var(--success-bg); color: var(--success); }
+.status-badge.partial { background: var(--warning-bg); color: var(--warning); }
+.status-badge.due { background: var(--danger-bg); color: var(--danger); }
+.status-badge.hidden { background: var(--panel-alt); color: var(--muted); }
+
+.amounts-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  background: var(--panel-alt);
+  border-radius: 8px;
+  padding: 8px 6px;
+  margin: 8px 0;
+}
+.amount-cell { text-align: center; min-width: 0; }
+.amount-cell .lbl {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.amount-cell .val {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.amount-cell .val.due { color: var(--danger); }
+.amount-cell .val.paid { color: var(--success); }
+.amount-cell .val.curr { color: var(--primary); }
+
+.card-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.card-actions button {
+  padding: 9px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: background 0.12s, transform 0.1s;
+  min-height: 38px;
+  position: relative;
+  z-index: 2;
+}
+.card-actions button:active { transform: scale(0.94); }
+.card-actions .act-print { color: var(--link); border-color: var(--link); background: transparent; }
+.card-actions .act-pay { background: var(--success); color: #fff; border-color: var(--success); }
+.card-actions .act-edit { background: var(--primary); color: #fff; border-color: var(--primary); }
+.card-actions .act-del { background: transparent; color: var(--danger); border-color: var(--danger); }
+.card-actions button i { pointer-events: none; }
+
+@keyframes blinkHighlight {
+  0%   { background-color: #fde68a; box-shadow: inset 0 0 0 3px #d4a72c; }
+  5%   { background-color: var(--panel); box-shadow: inset 0 0 0 1px #d4a72c; }
+  10%  { background-color: #fde68a; box-shadow: inset 0 0 0 3px #d4a72c; }
+  15%  { background-color: var(--panel); box-shadow: inset 0 0 0 1px #d4a72c; }
+  20%  { background-color: #fde68a; box-shadow: inset 0 0 0 3px #d4a72c; }
+  25%  { background-color: #fef3c7; box-shadow: inset 0 0 0 2px #d4a72c; }
+  90%  { background-color: #fef3c7; box-shadow: inset 0 0 0 2px #d4a72c; }
+  100% { background-color: var(--panel); box-shadow: none; }
+}
+body.dark .customer-card.blink { animation: blinkHighlightDark 10s ease-in-out; }
+@keyframes blinkHighlightDark {
+  0%   { background-color: #5a4218; box-shadow: inset 0 0 0 3px #d4a72c; }
+  5%   { background-color: var(--panel); box-shadow: inset 0 0 0 1px #d4a72c; }
+  10%  { background-color: #5a4218; box-shadow: inset 0 0 0 3px #d4a72c; }
+  15%  { background-color: var(--panel); box-shadow: inset 0 0 0 1px #d4a72c; }
+  20%  { background-color: #5a4218; box-shadow: inset 0 0 0 3px #d4a72c; }
+  25%  { background-color: #3a2e15; box-shadow: inset 0 0 0 2px #d4a72c; }
+  90%  { background-color: #3a2e15; box-shadow: inset 0 0 0 2px #d4a72c; }
+  100% { background-color: var(--panel); box-shadow: none; }
+}
+.customer-card.blink { animation: blinkHighlight 10s ease-in-out; }
+
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--muted);
+}
+.empty-state i {
+  font-size: 48px;
+  color: var(--border-strong);
+  margin-bottom: 12px;
+  display: block;
+}
+.empty-state p { font-size: 14px; }
+
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px 16px;
+  background: var(--bg);
+}
+.page-info { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.page-controls { display: flex; align-items: center; gap: 6px; }
+.page-btn {
+  min-width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.page-btn:active { background: var(--panel-alt); }
+.page-btn:disabled { opacity: 0.4; }
+.page-btn.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.page-size-select {
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.fab {
+  position: fixed;
+  right: 16px;
+  bottom: calc(var(--nav-height) + 16px + env(safe-area-inset-bottom));
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(31,78,121,0.35);
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, background 0.15s;
+}
+.fab:active { transform: scale(0.92); background: var(--primary-hover); }
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--nav-height);
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 90;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  transition: color 0.15s;
+  padding: 6px 2px;
+  position: relative;
+}
+.nav-item i { font-size: 19px; pointer-events: none; }
+.nav-item span { pointer-events: none; }
+.nav-item.active { color: var(--primary); }
+
+.txn-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  box-shadow: var(--shadow-sm);
+}
+.txn-card .txn-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.txn-card .txn-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+.txn-card .txn-time {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.txn-card .txn-amount {
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.txn-card .txn-amount.positive { color: var(--success); }
+.txn-card .txn-amount.negative { color: var(--danger); }
+.txn-card .txn-amount.neutral { color: var(--primary); }
+.txn-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border-radius: 4px;
+}
+.txn-type-badge.received { background: var(--success-bg); color: var(--success); }
+.txn-type-badge.due-added { background: var(--warning-bg); color: var(--warning); }
+.txn-type-badge.adjustment { background: var(--primary-light); color: var(--primary); }
+.txn-type-badge.edit { background: var(--panel-alt); color: var(--muted); }
+.txn-type-badge.other { background: var(--panel-alt); color: var(--muted); }
+.txn-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.tool-section { margin: 0 12px 16px; }
+.tool-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  padding: 12px 4px 8px;
+}
+.tool-list {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.tool-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  font-size: 14px;
+  color: var(--text);
+  font-family: inherit;
+  width: 100%;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  text-align: left;
+  transition: background 0.12s;
+}
+.tool-item:last-child { border-bottom: none; }
+.tool-item:active { background: var(--panel-alt); }
+.tool-item.danger { color: var(--danger); }
+.tool-item i.tool-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 15px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+.tool-item.danger i.tool-icon {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.tool-item .tool-label { flex: 1; font-weight: 500; pointer-events: none; }
+.tool-item .tool-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 1px;
+  font-weight: 400;
+}
+.tool-item .chev {
+  color: var(--muted);
+  font-size: 12px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+.tool-item .live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--success);
+  border-radius: 50%;
+  margin-right: 5px;
+  animation: pulseDot 1.5s infinite;
+  pointer-events: none;
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 12px 12px;
+}
+.report-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.report-card .r-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.4px;
+}
+.report-card .r-value {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 4px;
+  color: var(--primary);
+  line-height: 1.15;
+}
+.report-card .r-value.success { color: var(--success); }
+.report-card .r-value.danger { color: var(--danger); }
+.report-card .r-value.warning { color: var(--warning); }
+
+.form-group { margin-bottom: 12px; }
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 5px;
+  letter-spacing: 0.1px;
+}
+.form-group label .req { color: var(--danger); margin-left: 2px; }
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: inherit;
+  background: var(--input-bg);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(31,78,121,0.15);
+}
+.form-group textarea {
+  resize: vertical;
+  min-height: 60px;
+  line-height: 1.45;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  background: var(--panel-alt);
+  color: var(--text);
+  transition: transform 0.1s, background 0.15s;
+  min-height: 46px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn i { pointer-events: none; }
+.btn span { pointer-events: none; }
+.btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-success { background: var(--success); color: #fff; border-color: var(--success); }
+.btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+.btn-warning { background: var(--warning); color: #fff; border-color: var(--warning); }
+.btn-outline { background: transparent; color: var(--primary); border-color: var(--primary); }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--border); }
+.btn-block { width: 100%; }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 500;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  overscroll-behavior: contain;
+}
+.modal-overlay.open { display: flex; }
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0.6; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+.modal-sheet {
+  background: var(--panel);
+  width: 100%;
+  max-width: 560px;
+  max-height: 92vh;
+  border-radius: 22px 22px 0 0;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.24s cubic-bezier(0.32, 0.72, 0, 1);
+  overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.modal-sheet.wide { max-width: 900px; }
+.modal-sheet.full {
+  max-width: 100%;
+  height: 96vh;
+  max-height: 96vh;
+  border-radius: 22px 22px 0 0;
+}
+.modal-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--border-strong);
+  border-radius: 2px;
+  margin: 8px auto 0;
+  flex-shrink: 0;
+}
+.modal-header {
+  padding: 14px 18px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--panel-alt);
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+}
+.modal-close i { pointer-events: none; }
+.modal-body {
+  padding: 16px 18px;
+  overflow-y: auto;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+}
+.modal-body.no-pad { padding: 8px; }
+.modal-footer {
+  padding: 12px 18px 16px;
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  background: var(--panel);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.modal-footer .btn { flex: 1; min-width: 0; }
+.modal-footer .btn:only-child { flex: 1; }
+
+.toast-container {
+  position: fixed;
+  top: calc(var(--header-height) + 12px + env(safe-area-inset-top));
+  left: 12px;
+  right: 12px;
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  padding: 12px 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text);
+  box-shadow: var(--shadow-lg);
+  animation: toastIn 0.22s ease;
+  pointer-events: auto;
+  cursor: pointer;
+  font-weight: 500;
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.toast.success { border-left-color: var(--success); }
+.toast.error { border-left-color: var(--danger); }
+.toast.warning { border-left-color: var(--warning); }
+.toast.info { border-left-color: var(--link); }
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.preview-item {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  min-width: 0;
+}
+.preview-item .pv-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.4px;
+}
+.preview-item .pv-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 3px;
+  word-break: break-word;
+}
+.amount-blocks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 14px 0;
+}
+.amount-block {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 8px;
+  text-align: center;
+  min-width: 0;
+}
+.amount-block .ab-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+}
+.amount-block .ab-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 4px;
+  word-break: break-word;
+}
+.note-box {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+  color: var(--text);
+  min-height: 44px;
+}
+.warning-box {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
+  border-radius: 10px;
+  color: var(--danger);
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.info-box {
+  background: var(--primary-light);
+  border: 1px solid var(--primary);
+  border-radius: 10px;
+  color: var(--text);
+  padding: 12px 14px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  line-height: 1.45;
+}
+.info-box-warning {
+  background: var(--warning-bg);
+  border: 1px solid var(--warning);
+  border-radius: 10px;
+  color: var(--warning);
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  line-height: 1.45;
+}
+.password-error {
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 6px;
+  display: none;
+}
+.password-error.visible { display: block; }
+
+.segmented {
+  display: flex;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
+  margin-bottom: 14px;
+}
+.segmented button {
+  flex: 1;
+  padding: 9px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  border-radius: 8px;
+  transition: all 0.15s;
+  position: relative;
+  z-index: 2;
+}
+.segmented button.active {
+  background: var(--panel);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.bot-link-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--primary-light);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  margin-top: 6px;
+}
+.bot-link-pill svg { display: block; }
+
+/* Live sheet iframe */
+.live-sheet-frame {
+  width: 100%;
+  height: 65vh;
+  min-height: 380px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel-alt);
+  display: block;
+}
+.live-sheet-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+.live-sheet-tab {
+  flex: 1;
+  padding: 10px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.live-sheet-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.live-sheet-tab i { pointer-events: none; }
+
+.print-area { display: none; }
+@media print {
+  @page { margin: 12mm; }
+  html, body { background: #fff !important; color: #000 !important; }
+  body > *:not(.print-area) { display: none !important; }
+  .print-area {
+    display: block !important;
+    background: #fff !important;
+    color: #000 !important;
+    font-family: "Times New Roman", Georgia, serif !important;
+    width: 100%;
+  }
+  .print-area * { color: #000 !important; background: transparent !important; }
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="title-block">
+    <div class="app-title" id="headerTitle">RGCE SparkDesk</div>
+    <div class="app-sub" id="headerSub">Customer Register</div>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn" id="hdrTelegram" title="Send backup to Telegram">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
+      </svg>
+    </button>
+    <button class="icon-btn" id="hdrSync" title="Sync now">
+      <i class="fas fa-cloud-upload-alt"></i>
+    </button>
+    <button class="icon-btn" id="hdrDark" title="Toggle dark mode">
+      <i class="fas fa-moon"></i>
+    </button>
+  </div>
+</header>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<main class="app-content">
+
+  <section class="tab-pane active" id="tab-customers">
+    <div class="search-bar">
+      <div class="search-input-wrap">
+        <i class="fas fa-search"></i>
+        <input type="text" id="globalSearch" placeholder="Search name, phone, address…" autocomplete="off">
+        <button class="search-clear" id="searchClear"><i class="fas fa-times"></i></button>
+      </div>
+      <button class="filter-icon-btn" id="filterToggle">
+        <i class="fas fa-filter"></i>
+        <span class="dot"></span>
+      </button>
+    </div>
+
+    <div class="filter-panel" id="filterPanel">
+      <div class="filter-row">
+        <div>
+          <label>Address</label>
+          <select id="filterAddress"><option value="">All</option></select>
+        </div>
+        <div>
+          <label>Status</label>
+          <select id="filterStatus">
+            <option value="">All</option>
+            <option value="Hidden Due">Hidden Due</option>
+            <option value="Due">Due</option>
+            <option value="Partial Paid">Partial Paid</option>
+            <option value="Paid">Paid</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-row">
+        <div>
+          <label>Source</label>
+          <select id="filterSource">
+            <option value="">All</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label>Sort by</label>
+          <select id="sortSelect">
+            <option value="sl">Default (SL)</option>
+            <option value="name">Name</option>
+            <option value="address">Address</option>
+            <option value="source">Source</option>
+            <option value="status">Status</option>
+            <option value="due">Total Due</option>
+            <option value="paid">Total Paid</option>
+            <option value="currentDue">Current Due</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-actions">
+        <button class="btn btn-ghost" id="filterClear" style="flex:1;">
+          <i class="fas fa-times"></i> Clear
+        </button>
+        <button class="btn btn-outline" id="filterPrint" style="flex:1;">
+          <i class="fas fa-print"></i> Print Filtered
+        </button>
+      </div>
+    </div>
+
+    <div class="stats-strip">
+      <div class="stat-mini">
+        <div class="lbl">Total</div>
+        <div class="val total" id="statTotal">0</div>
+      </div>
+      <div class="stat-mini">
+        <div class="lbl">Due</div>
+        <div class="val due" id="statDue">0</div>
+      </div>
+      <div class="stat-mini">
+        <div class="lbl">Paid</div>
+        <div class="val paid" id="statPaid">0</div>
+      </div>
+    </div>
+
+    <div class="card-list" id="customerList"></div>
+
+    <div class="pagination-bar" id="paginationBar">
+      <div class="page-info" id="pageInfo">0 of 0</div>
+      <div class="page-controls" id="pageControls"></div>
+      <select class="page-size-select" id="pageSizeSelect">
+        <option value="10">10/pg</option>
+        <option value="20">20/pg</option>
+        <option value="35" selected>35/pg</option>
+        <option value="50">50/pg</option>
+        <option value="100">100/pg</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="tab-pane" id="tab-transactions">
+    <div class="search-bar">
+      <div class="search-input-wrap">
+        <i class="fas fa-search"></i>
+        <input type="text" id="txnSearch" placeholder="Search customer or note…" autocomplete="off">
+      </div>
+    </div>
+    <div style="padding:0 12px 10px;">
+      <div class="segmented" id="txnRangeSeg">
+        <button class="active" data-range="all">All</button>
+        <button data-range="today">Today</button>
+        <button data-range="7d">7 Days</button>
+        <button data-range="30d">30 Days</button>
+      </div>
+      <div class="segmented" id="txnTypeSeg">
+        <button class="active" data-type="">All</button>
+        <button data-type="Payment Received">Received</button>
+        <button data-type="Due Added">Due</button>
+        <button data-type="Adjustment">Adjust</button>
+      </div>
+    </div>
+
+    <div class="report-grid">
+      <div class="report-card">
+        <div class="r-label">Transactions</div>
+        <div class="r-value" id="txnStatCount">0</div>
+      </div>
+      <div class="report-card">
+        <div class="r-label">Received</div>
+        <div class="r-value success" id="txnStatReceived">0</div>
+      </div>
+      <div class="report-card">
+        <div class="r-label">Due Added</div>
+        <div class="r-value danger" id="txnStatDue">0</div>
+      </div>
+      <div class="report-card">
+        <div class="r-label">Adjustments</div>
+        <div class="r-value warning" id="txnStatAdjust">0</div>
+      </div>
+    </div>
+
+    <div style="padding:0 12px 10px;display:flex;gap:8px;">
+      <button class="btn btn-outline" id="txnRefreshBtn" style="flex:1;">
+        <i class="fas fa-sync-alt"></i> Refresh
+      </button>
+      <button class="btn btn-outline" id="txnUploadBtn" style="flex:1;">
+        <i class="fas fa-cloud-upload-alt"></i> Upload Local
+      </button>
+    </div>
+
+    <div class="card-list" id="txnList"></div>
+  </section>
+
+  <section class="tab-pane" id="tab-reports">
+    <div style="padding:0 12px;">
+      <div class="tool-section-title">Summary</div>
+    </div>
+    <div class="report-grid">
+      <div class="report-card">
+        <div class="r-label">Total Customers</div>
+        <div class="r-value" id="rpTotal">0</div>
+      </div>
+      <div class="report-card">
+        <div class="r-label">Net Outstanding</div>
+        <div class="r-value danger" id="rpNet">0</div>
+      </div>
+      <div class="report-card">
+        <div class="r-label">Total Due</div>
+        <div class="r-value warning" id="rpDue">0</div>
+      </div>
+      <div class="report-card">
+        <div class="r-label">Total Paid</div>
+        <div class="r-value success" id="rpPaid">0</div>
+      </div>
+      <div class="report-card">
+        <div class="r-label">With Due</div>
+        <div class="r-value danger" id="rpWithDue">0</div>
+      </div>
+      <div class="report-card">
+        <div class="r-label">Fully Paid</div>
+        <div class="r-value success" id="rpFullyPaid">0</div>
+      </div>
+      <div class="report-card">
+        <div class="r-label">Partial Paid</div>
+        <div class="r-value warning" id="rpPartial">0</div>
+      </div>
+      <div class="report-card">
+        <div class="r-label">Average Due</div>
+        <div class="r-value" id="rpAvg">0</div>
+      </div>
+    </div>
+
+    <div style="padding:0 12px;">
+      <div class="tool-section-title">Print Reports</div>
+    </div>
+    <div class="tool-section">
+      <div class="tool-list">
+        <button class="tool-item" data-report="summary">
+          <i class="fas fa-file-alt tool-icon"></i>
+          <span class="tool-label">Summary Report</span>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" data-report="filtered">
+          <i class="fas fa-filter tool-icon"></i>
+          <span class="tool-label">Filtered Customer Report</span>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" data-report="manual">
+          <i class="fas fa-clipboard-list tool-icon"></i>
+          <span class="tool-label">Manual Collection Sheet</span>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" data-report="txn">
+          <i class="fas fa-receipt tool-icon"></i>
+          <span class="tool-label">Transaction Statement</span>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="tab-pane" id="tab-tools">
+
+    <!-- ★ NEW: LIVE SHEET VIEWING -->
+    <div class="tool-section">
+      <div class="tool-section-title">Live Sheet Viewing</div>
+      <div class="tool-list">
+        <button class="tool-item" id="toolMainSheetLive">
+          <i class="fas fa-table tool-icon"></i>
+          <div class="tool-label">
+            <span class="live-dot"></span>Main Customer Sheet (Live)
+            <div class="tool-sub">Real-time preview • read-only</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="toolTxnSheetLive">
+          <i class="fas fa-receipt tool-icon"></i>
+          <div class="tool-label">
+            <span class="live-dot"></span>Transaction Sheet (Live)
+            <div class="tool-sub">Real-time preview • read-only</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="toolBothSheetsLive">
+          <i class="fas fa-columns tool-icon"></i>
+          <div class="tool-label">
+            <span class="live-dot"></span>Both Sheets (Tabbed)
+            <div class="tool-sub">Switch between sheets in one view</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <div class="tool-section-title">Backup & Restore</div>
+      <div class="tool-list">
+        <button class="tool-item" id="toolBackup">
+          <i class="fas fa-download tool-icon"></i>
+          <div class="tool-label">
+            Download JSON Backup
+            <div class="tool-sub">Save all data to a file</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="toolRestore">
+          <i class="fas fa-upload tool-icon"></i>
+          <div class="tool-label">
+            Restore from Backup
+            <div class="tool-sub">Load data from JSON file</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="toolDrive">
+          <i class="fab fa-google-drive tool-icon"></i>
+          <div class="tool-label">
+            Google Drive Backup
+            <div class="tool-sub">Open cloud backup folder</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <div class="tool-section-title">Telegram</div>
+      <div class="tool-list">
+        <button class="tool-item" id="toolTgSend">
+          <span class="tg-svg-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
+            </svg>
+          </span>
+          <div class="tool-label">
+            Send Backup to Telegram
+            <div class="tool-sub" id="tgStatusSub">Not configured</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="toolTgSetup">
+          <i class="fas fa-cog tool-icon"></i>
+          <div class="tool-label">
+            Configure Telegram
+            <div class="tool-sub">Bot: @RGCE_andro_bot</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="toolTgOpen">
+          <i class="fas fa-external-link-alt tool-icon"></i>
+          <div class="tool-label">
+            Open Bot Chat
+            <div class="tool-sub">@RGCE_andro_bot</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <div class="tool-section-title">Google Sheets Sync</div>
+      <div class="tool-list">
+        <button class="tool-item" id="toolSheetPush">
+          <i class="fas fa-cloud-upload-alt tool-icon"></i>
+          <div class="tool-label">
+            Push Customers → Sheet
+            <div class="tool-sub" id="sheetSyncSub">Last sync: Never</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="toolSheetPull">
+          <i class="fas fa-cloud-download-alt tool-icon"></i>
+          <div class="tool-label">
+            Pull Customers ← Sheet
+            <div class="tool-sub">Replace local data</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="toolSheetTxn">
+          <i class="fas fa-exchange-alt tool-icon"></i>
+          <div class="tool-label">
+            Upload Local Transactions
+            <div class="tool-sub">Push unsynced txns</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="toolSheetOpen">
+          <i class="fas fa-external-link-alt tool-icon"></i>
+          <div class="tool-label">
+            Open Main Sheet in Editor
+            <div class="tool-sub">Full edit access</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="toolTxnSheetOpen">
+          <i class="fas fa-external-link-alt tool-icon"></i>
+          <div class="tool-label">
+            Open Transaction Sheet in Editor
+            <div class="tool-sub">Full edit access</div>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <div class="tool-section-title">Maintenance</div>
+      <div class="tool-list">
+        <button class="tool-item" id="toolClearNotes">
+          <i class="fas fa-sticky-note tool-icon"></i>
+          <span class="tool-label">Clear All Notes</span>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="toolClearAmounts">
+          <i class="fas fa-calculator tool-icon"></i>
+          <span class="tool-label">Clear All Amounts</span>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="toolClearSource">
+          <i class="fas fa-coins tool-icon"></i>
+          <span class="tool-label">Clear Amounts by Source</span>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item danger" id="toolClearAll">
+          <i class="fas fa-trash-alt tool-icon"></i>
+          <span class="tool-label">Clear ALL Data</span>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="tab-pane" id="tab-settings">
+    <div class="tool-section">
+      <div class="tool-section-title">Appearance</div>
+      <div class="tool-list">
+        <button class="tool-item" id="setDark">
+          <i class="fas fa-moon tool-icon"></i>
+          <div class="tool-label">Dark Mode</div>
+          <div id="darkToggleWrap" style="display:flex;align-items:center;">
+            <input type="checkbox" id="darkToggle" style="width:22px;height:22px;accent-color:var(--primary);">
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <div class="tool-section-title">List Settings</div>
+      <div class="tool-list">
+        <div class="tool-item" style="cursor:default;">
+          <i class="fas fa-list-ol tool-icon"></i>
+          <div class="tool-label" style="margin-right:8px;">Rows per page</div>
+          <select class="page-size-select" id="setPageSize">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="35">35</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <div class="tool-section-title">Information</div>
+      <div class="tool-list">
+        <button class="tool-item" id="setShop">
+          <i class="fas fa-store tool-icon"></i>
+          <span class="tool-label">Shop Details</span>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="setDev">
+          <i class="fas fa-code tool-icon"></i>
+          <span class="tool-label">Developer Info</span>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+        <button class="tool-item" id="setHelp">
+          <i class="fas fa-question-circle tool-icon"></i>
+          <span class="tool-label">Help</span>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <div class="tool-section-title">Security</div>
+      <div class="tool-list">
+        <button class="tool-item" id="setAdmin">
+          <i class="fas fa-user-shield tool-icon"></i>
+          <span class="tool-label">Admin Panel</span>
+          <i class="fas fa-chevron-right chev"></i>
+        </button>
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:20px 12px 30px;color:var(--muted);font-size:11px;">
+      <div>RGCE SparkDesk v1.4 — Android</div>
+      <div style="margin-top:4px;">© 2025 Roza Gift Corner & Electric</div>
+      <div style="margin-top:4px;">
+        Powered by <a href="https://web.facebook.com/farhantanzidshiyam" target="_blank" style="color:var(--gold);font-weight:700;">Farhan Tanzid Shiyam</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<button class="fab" id="fabAdd" title="Add customer">
+  <i class="fas fa-plus"></i>
+</button>
+
+<nav class="bottom-nav">
+  <button class="nav-item active" data-tab="customers">
+    <i class="fas fa-users"></i>
+    <span>Customers</span>
+  </button>
+  <button class="nav-item" data-tab="transactions">
+    <i class="fas fa-exchange-alt"></i>
+    <span>History</span>
+  </button>
+  <button class="nav-item" data-tab="reports">
+    <i class="fas fa-chart-bar"></i>
+    <span>Reports</span>
+  </button>
+  <button class="nav-item" data-tab="tools">
+    <i class="fas fa-toolbox"></i>
+    <span>Tools</span>
+  </button>
+  <button class="nav-item" data-tab="settings">
+    <i class="fas fa-cog"></i>
+    <span>Settings</span>
+  </button>
+</nav>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-sheet" id="modalSheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3 id="modalTitle">Modal</h3>
+      <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<div class="print-area" id="printArea"></div>
+
+<input type="file" id="restoreFileInput" accept=".json" style="display:none;">
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const STORAGE_KEY = "roza_gift_corner_customers_v1.4_android";
+const SETTINGS_KEY = "rgce_android_settings_v1";
+const PWD = {
+  clearNotes: "3508",
+  clearAmounts: "3508",
+  summary: "3508",
+  delete: "3508",
+  backup: "3508",
+  clearAll: "1812693380",
+  master: "fmkk"
+};
+
+const TELEGRAM_BOT_TOKEN = "7672431132:AAEM7eylAjtO4rPbrxOGhrIA_fMJBcKwSk8";
+const TELEGRAM_BOT_LINK  = "https://t.me/RGCE_andro_bot";
+const TELEGRAM_BOT_HANDLE = "@RGCE_andro_bot";
+
+const APPS_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbw_7U4RMPHBxJIDxayIjzSwDT5tIJbFRVW1Uzx8qmkbKTxEOfu39Mptw1c-FFqhrUkAPg/exec";
+const SPREADSHEET_ID = "1LA-AbQ24BmmTqOk9We4zTC_RdsgX4oZCct-_nu8b1j8";
+const SHEET_EDIT_URL =
+  "https://docs.google.com/spreadsheets/d/1LA-AbQ24BmmTqOk9We4zTC_RdsgX4oZCct-_nu8b1j8/edit";
+const SHEET_PREVIEW_URL =
+  "https://docs.google.com/spreadsheets/d/1LA-AbQ24BmmTqOk9We4zTC_RdsgX4oZCct-_nu8b1j8/preview?rm=minimal&widget=true&headers=false&single=true";
+const GOOGLE_DRIVE_URL =
+  "https://drive.google.com/drive/folders/1yYuczLULObc0TrnQ3XlInfD8MH08POfs?usp=drive_link";
+
+const TXN_APPS_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbyjSmRW5d9oPxWij-aRYZvz_7_RATW6AN2TRp5FvvdCYg7AWdc5jHlEJ-NdMZwnNyhAOQ/exec";
+const TXN_SPREADSHEET_ID = "1ZqqRi3j32fdBdT8nQ35OnnFWYNMThfjM_nHB95BSBeQ";
+const TXN_SHEET_EDIT_URL =
+  "https://docs.google.com/spreadsheets/d/1ZqqRi3j32fdBdT8nQ35OnnFWYNMThfjM_nHB95BSBeQ/edit";
+const TXN_SHEET_PREVIEW_URL =
+  "https://docs.google.com/spreadsheets/d/1ZqqRi3j32fdBdT8nQ35OnnFWYNMThfjM_nHB95BSBeQ/preview?rm=minimal&widget=true&headers=false&single=true";
+
+const TG_TOKEN_KEY = "telegram_bot_token";
+const TG_CHAT_KEY  = "telegram_chat_id";
+const LAST_SYNC_KEY = "rgce_android_last_sync";
+const LAST_TG_KEY   = "rgce_android_last_tg_backup";
+
+const FIXED_ADDRESSES = [
+  "Kh P","Naohata Mor","Chowmashiya","Bagdhana","Fulbari","Mohadevpur, Naogaon",
+  "Naogaon","D. Kh P","Ranipukur","Shikarpur","Palpara","Saraswatipur","Rishipara",
+  "Naripara, Kh P","Jalalpur","Sardarpara, Kh P","Dewanpara, Kh P","Sharuppur",
+  "Kumirpukur","Sonapur","Lolobolo","Vimpur","Munshipara, Kh P","Khalishakuri, Kh P"
+];
+const FIXED_SOURCES = ["1","2","3","4","5","6"];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let customers = [];
+let filteredCustomers = [];
+let currentPage = 1;
+let pageSize = 35;
+let sortColumn = null;
+let sortDirection = 'asc';
+
+let txnFilters = { search: '', type: '', range: 'all' };
+let txnSheetData = [];
+let txnOnline = false;
+let txnRefreshTimer = null;
+
+const recentlyChangedIds = new Map();
+const HIGHLIGHT_DURATION_MS = 10000;
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+function $(id) { return document.getElementById(id); }
+
+function formatMoney(v) {
+  if (v === undefined || v === null || v === 0) return '';
+  return Math.round(v).toLocaleString('en-US');
+}
+function formatMoneyOrZero(v) {
+  return Math.round(v || 0).toLocaleString('en-US');
+}
+function getCurrentDue(c) { return Math.max(0, (c.due || 0) - (c.paid || 0)); }
+function getStatus(c) {
+  const due = c.due || 0, paid = c.paid || 0;
+  const cd = getCurrentDue(c);
+  if (due === 0 && paid === 0) return "Hidden Due";
+  if (cd > 0 && paid === 0) return "Due";
+  if (cd > 0 && paid > 0) return "Partial Paid";
+  return "Paid";
+}
+function statusClassKey(status) {
+  switch (status) {
+    case "Paid": return "paid";
+    case "Partial Paid": return "partial";
+    case "Due": return "due";
+    case "Hidden Due": return "hidden";
+    default: return "";
+  }
+}
+function generateId() {
+  return Date.now().toString().slice(-10) + Math.floor(Math.random() * 1000);
+}
+
+function findCustomer(id) {
+  if (id === undefined || id === null) return null;
+  const key = String(id);
+  for (let i = 0; i < customers.length; i++) {
+    if (String(customers[i].id) === key) return customers[i];
+  }
+  return null;
+}
+function normalizeId(raw) {
+  if (raw === undefined || raw === null) return generateId();
+  const s = String(raw).trim();
+  if (s === '' || s === 'undefined' || s === 'null') return generateId();
+  return s;
+}
+
+function todayDDMMYYYY() {
+  const d = new Date();
+  return String(d.getDate()).padStart(2,'0') + '/' +
+         String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear();
+}
+function titleCase(str) {
+  return (str || '').replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.substr(1).toLowerCase());
+}
+function escapeHtml(s) {
+  return String(s || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function showToast(msg, type = 'info', duration = 3500) {
+  const c = $('toastContainer');
+  if (!c) return;
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  t.addEventListener('click', () => t.remove());
+  c.appendChild(t);
+  setTimeout(() => t.remove(), duration);
+}
+function markCustomerChanged(id) {
+  if (id === undefined || id === null || id === '') return;
+  const key = String(id);
+  recentlyChangedIds.set(key, Date.now() + HIGHLIGHT_DURATION_MS);
+  setTimeout(() => {
+    const exp = recentlyChangedIds.get(key);
+    if (exp && exp <= Date.now() + 200) recentlyChangedIds.delete(key);
+  }, HIGHLIGHT_DURATION_MS + 200);
+}
+function isRecentlyChanged(id) {
+  if (id === undefined || id === null || id === '') return false;
+  const key = String(id);
+  const exp = recentlyChangedIds.get(key);
+  if (!exp) return false;
+  if (exp < Date.now()) { recentlyChangedIds.delete(key); return false; }
+  return true;
+}
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      if (s.dark) document.body.classList.add('dark');
+      if (s.pageSize) pageSize = s.pageSize;
+    }
+  } catch(e) {}
+}
+function saveSettings() {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+      dark: document.body.classList.contains('dark'),
+      pageSize
+    }));
+  } catch(e) {}
+}
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+function loadData() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    try {
+      customers = JSON.parse(raw);
+      if (!Array.isArray(customers)) customers = [];
+      customers = customers.map(c => {
+        c.id = normalizeId(c.id);
+        c.due = Math.round(Number(c.due)) || 0;
+        c.paid = Math.round(Number(c.paid)) || 0;
+        c.note = c.note || '';
+        c.address = c.address || '';
+        c.source = c.source || '';
+        c.phone = c.phone || '';
+        c.dateAdded = c.dateAdded || todayDDMMYYYY();
+        if (!c.transactionHistory) c.transactionHistory = [];
+        return c;
+      });
+    } catch(e) { customers = []; }
+  } else {
+    customers = [];
+  }
+}
+function saveData() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(customers)); } catch(e) {}
+  triggerAutoSync();
+}
+let autoSyncTimer = null;
+function triggerAutoSync() {
+  if (customers.length === 0) return;
+  clearTimeout(autoSyncTimer);
+  autoSyncTimer = setTimeout(() => { syncToGoogleSheets(true); }, 5000);
+}
+
+/* ============================================================
+   TAB NAVIGATION
+   ============================================================ */
+function switchTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pane = $('tab-' + name);
+  if (pane) pane.classList.add('active');
+  const nav = document.querySelector('.nav-item[data-tab="' + name + '"]');
+  if (nav) nav.classList.add('active');
+
+  $('fabAdd').style.display = (name === 'customers') ? 'flex' : 'none';
+
+  const titles = {
+    customers: ['RGCE SparkDesk', 'Customer Register'],
+    transactions: ['Transactions', 'Full history log'],
+    reports: ['Reports', 'Summary & printing'],
+    tools: ['Tools', 'Backup, sync & maintenance'],
+    settings: ['Settings', 'App preferences']
+  };
+  const t = titles[name] || titles.customers;
+  $('headerTitle').textContent = t[0];
+  $('headerSub').textContent = t[1];
+
+  if (name === 'reports') renderReports();
+  if (name === 'transactions') {
+    renderTransactions();
+    startTxnRefresh();
+  } else {
+    stopTxnRefresh();
+  }
+}
+
+/* ============================================================
+   CUSTOMER LIST
+   ============================================================ */
+function applyFilters() {
+  const search = ($('globalSearch').value || '').trim().toLowerCase();
+  const addr = $('filterAddress').value;
+  const status = $('filterStatus').value;
+  const source = $('filterSource').value;
+
+  filteredCustomers = customers.filter(c => {
+    if (search) {
+      const hay = `${c.name||''} ${c.phone||''} ${c.address||''} ${c.source||''}`.toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    if (addr && c.address !== addr) return false;
+    if (status && getStatus(c) !== status) return false;
+    if (source && c.source !== source) return false;
+    return true;
+  });
+}
+function sortFiltered() {
+  if (!sortColumn) return;
+  filteredCustomers.sort((a, b) => {
+    let va, vb;
+    switch (sortColumn) {
+      case 'sl': va = customers.indexOf(a); vb = customers.indexOf(b); break;
+      case 'name': va = (a.name||'').toLowerCase(); vb = (b.name||'').toLowerCase(); break;
+      case 'address': va = (a.address||'').toLowerCase(); vb = (b.address||'').toLowerCase(); break;
+      case 'source': va = (a.source||'').toLowerCase(); vb = (b.source||'').toLowerCase(); break;
+      case 'status': va = getStatus(a); vb = getStatus(b); break;
+      case 'due': va = a.due||0; vb = b.due||0; break;
+      case 'paid': va = a.paid||0; vb = b.paid||0; break;
+      case 'currentDue': va = getCurrentDue(a); vb = getCurrentDue(b); break;
+      default: return 0;
+    }
+    if (va < vb) return sortDirection === 'asc' ? -1 : 1;
+    if (va > vb) return sortDirection === 'asc' ? 1 : -1;
+    return 0;
+  });
+}
+
+function renderCustomerCard(c) {
+  const status = getStatus(c);
+  const statusKey = statusClassKey(status);
+  const currentDue = getCurrentDue(c);
+  const blink = isRecentlyChanged(c.id) ? ' blink' : '';
+  return `
+    <div class="customer-card ${statusKey}${blink}" data-id="${escapeHtml(c.id)}">
+      <div class="card-head">
+        <div style="flex:1;min-width:0;">
+          <div class="cust-name">${escapeHtml(c.name)}</div>
+          ${c.phone ? `<div class="cust-meta"><i class="fas fa-phone"></i>${escapeHtml(c.phone)}</div>` : ''}
+          ${c.address ? `<div class="cust-meta"><i class="fas fa-map-marker-alt"></i>${escapeHtml(c.address)}</div>` : ''}
+          ${c.source ? `<div class="cust-meta"><i class="fas fa-tag"></i>Source ${escapeHtml(c.source)}</div>` : ''}
+        </div>
+        <span class="status-badge ${statusKey}">${status}</span>
+      </div>
+      <div class="amounts-row">
+        <div class="amount-cell">
+          <div class="lbl">Due</div>
+          <div class="val due">${formatMoneyOrZero(c.due||0)}</div>
+        </div>
+        <div class="amount-cell">
+          <div class="lbl">Paid</div>
+          <div class="val paid">${formatMoneyOrZero(c.paid||0)}</div>
+        </div>
+        <div class="amount-cell">
+          <div class="lbl">Current</div>
+          <div class="val curr">${formatMoneyOrZero(currentDue)}</div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button type="button" class="act-print" data-act="print"><i class="fas fa-print"></i>PRINT</button>
+        <button type="button" class="act-pay" data-act="pay"><i class="fas fa-check"></i>PAY</button>
+        <button type="button" class="act-edit" data-act="edit"><i class="fas fa-edit"></i>EDIT</button>
+        <button type="button" class="act-del" data-act="del"><i class="fas fa-trash"></i>DEL</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderCustomers() {
+  applyFilters();
+  sortFiltered();
+
+  const list = $('customerList');
+  const total = filteredCustomers.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * pageSize;
+  const end = Math.min(start + pageSize, total);
+  const items = filteredCustomers.slice(start, end);
+
+  if (items.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-user-slash"></i>
+        <p>${total === 0 ? 'No customers yet' : 'No matching customers'}</p>
+        ${total === 0 ? '<p style="margin-top:6px;font-size:12px;">Tap the + button to add your first customer</p>' : ''}
+      </div>
+    `;
+  } else {
+    list.innerHTML = items.map(c => renderCustomerCard(c)).join('');
+    list.querySelectorAll('.customer-card').forEach(card => {
+      const id = card.dataset.id;
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.card-actions')) return;
+        openDetailModal(id);
+      });
+      const btnPrint = card.querySelector('[data-act="print"]');
+      const btnPay   = card.querySelector('[data-act="pay"]');
+      const btnEdit  = card.querySelector('[data-act="edit"]');
+      const btnDel   = card.querySelector('[data-act="del"]');
+      if (btnPrint) btnPrint.addEventListener('click', (e) => { e.stopPropagation(); openPrintModal(id); });
+      if (btnPay)   btnPay.addEventListener('click',   (e) => { e.stopPropagation(); openPaymentModal(id); });
+      if (btnEdit)  btnEdit.addEventListener('click',  (e) => { e.stopPropagation(); openEditModal(id); });
+      if (btnDel)   btnDel.addEventListener('click',   (e) => { e.stopPropagation(); openDeleteModal(id); });
+    });
+  }
+
+  $('pageInfo').textContent = total === 0 ? '0 of 0' : `${start + 1}–${end} of ${total}`;
+  renderPagination(totalPages);
+
+  $('statTotal').textContent = customers.length;
+  $('statDue').textContent = customers.filter(c => {
+    const s = getStatus(c); return s === 'Due' || s === 'Partial Paid';
+  }).length;
+  $('statPaid').textContent = customers.filter(c => getStatus(c) === 'Paid').length;
+
+  const hasFilter = $('globalSearch').value || $('filterAddress').value ||
+                    $('filterStatus').value || $('filterSource').value;
+  $('filterToggle').classList.toggle('has-filters', !!hasFilter);
+  $('searchClear').classList.toggle('visible', !!$('globalSearch').value);
+}
+
+function renderPagination(totalPages) {
+  const c = $('pageControls');
+  if (totalPages <= 1) {
+    c.innerHTML = `<span style="font-size:12px;color:var(--muted);">Page 1</span>`;
+    return;
+  }
+  let html = '';
+  html += `<button class="page-btn" data-pg="prev" ${currentPage <= 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i></button>`;
+  html += `<button class="page-btn active">${currentPage}</button>`;
+  html += `<button class="page-btn" data-pg="next" ${currentPage >= totalPages ? 'disabled' : ''}><i class="fas fa-chevron-right"></i></button>`;
+  c.innerHTML = html;
+  c.querySelectorAll('[data-pg]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.pg === 'prev' && currentPage > 1) currentPage--;
+      if (btn.dataset.pg === 'next' && currentPage < totalPages) currentPage++;
+      renderCustomers();
+    });
+  });
+}
+
+function refreshAddressFilter() {
+  const sel = $('filterAddress');
+  if (!sel) return;
+  const prev = sel.value;
+  const used = new Set();
+  customers.forEach(c => { if (c.address) used.add(c.address); });
+  const all = [...new Set([...FIXED_ADDRESSES, ...used])].sort((a,b) => a.localeCompare(b));
+  sel.innerHTML = '<option value="">All</option>' +
+    all.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+  if (prev && all.includes(prev)) sel.value = prev;
+}
+
+/* ============================================================
+   TRANSACTIONS
+   ============================================================ */
+function parseDate(str) {
+  if (!str) return null;
+  let d = new Date(str);
+  if (!isNaN(d.getTime())) return d;
+  const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:,\s*(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
+  if (m) {
+    d = new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]),
+                 parseInt(m[4]||'0'), parseInt(m[5]||'0'), parseInt(m[6]||'0'));
+    if (!isNaN(d.getTime())) return d;
+  }
+  return null;
+}
+function txnTypeClass(t) {
+  const s = (t || '').toLowerCase();
+  if (s.includes('received') || s.includes('receive')) return 'received';
+  if (s.includes('due added')) return 'due-added';
+  if (s.includes('adjust')) return 'adjustment';
+  if (s.includes('edit')) return 'edit';
+  return 'other';
+}
+function buildAllTransactions() {
+  if (txnOnline && txnSheetData.length > 0) {
+    return txnSheetData.map(r => ({
+      customerId: r.CustomerID,
+      customerName: r.CustomerName || 'Unnamed',
+      customerPhone: r.CustomerPhone || '',
+      customerAddress: r.CustomerAddress || '',
+      date: r.Timestamp ? new Date(r.Timestamp).toLocaleString() : '',
+      timestamp: r.Timestamp ? new Date(r.Timestamp).getTime() : 0,
+      type: r.Type || 'Unknown',
+      amount: Number(r.Amount) || 0,
+      note: r.Note || ''
+    })).sort((a, b) => b.timestamp - a.timestamp);
+  }
+  const list = [];
+  customers.forEach(c => {
+    (c.transactionHistory || []).forEach(t => {
+      const ts = parseDate(t.date);
+      list.push({
+        customerId: c.id,
+        customerName: c.name || 'Unnamed',
+        customerPhone: c.phone || '',
+        customerAddress: c.address || '',
+        date: t.date || '',
+        timestamp: ts ? ts.getTime() : 0,
+        type: t.type || 'Unknown',
+        amount: Number(t.amount) || 0,
+        note: t.note || ''
+      });
+    });
+  });
+  list.sort((a, b) => b.timestamp - a.timestamp);
+  return list;
+}
+function filterTransactions(all) {
+  const q = (txnFilters.search || '').trim().toLowerCase();
+  const type = txnFilters.type;
+  const range = txnFilters.range;
+  const now = Date.now();
+  const cutoff =
+    range === 'today' ? now - 24*3600*1000 :
+    range === '7d' ? now - 7*24*3600*1000 :
+    range === '30d' ? now - 30*24*3600*1000 : 0;
+
+  return all.filter(t => {
+    if (q) {
+      const hay = `${t.customerName} ${t.customerPhone} ${t.note} ${t.type}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    if (type && !(t.type || '').toLowerCase().includes(type.toLowerCase())) return false;
+    if (t.timestamp < cutoff) return false;
+    return true;
+  });
+}
+function renderTransactions() {
+  const all = buildAllTransactions();
+  const filtered = filterTransactions(all);
+
+  const received = filtered.filter(t => txnTypeClass(t.type) === 'received').reduce((s,t) => s+t.amount, 0);
+  const dueAdded = filtered.filter(t => txnTypeClass(t.type) === 'due-added').reduce((s,t) => s+t.amount, 0);
+  const adjust = filtered.filter(t => txnTypeClass(t.type) === 'adjustment').reduce((s,t) => s+t.amount, 0);
+
+  $('txnStatCount').textContent = filtered.length;
+  $('txnStatReceived').textContent = formatMoneyOrZero(received);
+  $('txnStatDue').textContent = formatMoneyOrZero(dueAdded);
+  $('txnStatAdjust').textContent = formatMoneyOrZero(adjust);
+
+  const list = $('txnList');
+  if (filtered.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-receipt"></i>
+        <p>No transactions${txnFilters.search || txnFilters.type ? ' matching filters' : ''}</p>
+      </div>
+    `;
+    return;
+  }
+  list.innerHTML = filtered.map(t => {
+    const cls = txnTypeClass(t.type);
+    const sign = cls === 'received' ? '+' : (cls === 'due-added' ? '−' : '');
+    const signCls = cls === 'received' ? 'positive' : (cls === 'due-added' ? 'negative' : 'neutral');
+    return `
+      <div class="txn-card">
+        <div class="txn-head">
+          <div style="flex:1;min-width:0;">
+            <div class="txn-name">${escapeHtml(t.customerName)}</div>
+            <div class="txn-time">${escapeHtml(t.date || '—')}</div>
+          </div>
+          <div class="txn-amount ${signCls}">${sign}${formatMoneyOrZero(t.amount)}</div>
+        </div>
+        <span class="txn-type-badge ${cls}">${escapeHtml(t.type)}</span>
+        ${t.note ? `<div class="txn-note">${escapeHtml(t.note)}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+function startTxnRefresh() {
+  stopTxnRefresh();
+  txnRefreshTimer = setInterval(() => {
+    if ($('tab-transactions').classList.contains('active')) {
+      fetchTxnFromSheet(true).then(() => renderTransactions());
+    }
+  }, 30000);
+}
+function stopTxnRefresh() {
+  if (txnRefreshTimer) { clearInterval(txnRefreshTimer); txnRefreshTimer = null; }
+}
+
+/* ============================================================
+   REPORTS
+   ============================================================ */
+function renderReports() {
+  const total = customers.length;
+  const totalDue = customers.reduce((s,c) => s + (c.due||0), 0);
+  const totalPaid = customers.reduce((s,c) => s + (c.paid||0), 0);
+  const net = customers.reduce((s,c) => s + getCurrentDue(c), 0);
+  const withDue = customers.filter(c => {
+    const st = getStatus(c); return st === 'Due' || st === 'Partial Paid';
+  }).length;
+  const fullyPaid = customers.filter(c => getStatus(c) === 'Paid').length;
+  const partial = customers.filter(c => getStatus(c) === 'Partial Paid').length;
+  const avg = total > 0 ? net / total : 0;
+
+  $('rpTotal').textContent = total;
+  $('rpNet').textContent = formatMoneyOrZero(net);
+  $('rpDue').textContent = formatMoneyOrZero(totalDue);
+  $('rpPaid').textContent = formatMoneyOrZero(totalPaid);
+  $('rpWithDue').textContent = withDue;
+  $('rpFullyPaid').textContent = fullyPaid;
+  $('rpPartial').textContent = partial;
+  $('rpAvg').textContent = formatMoneyOrZero(avg);
+}
+
+/* ============================================================
+   LIVE SHEET VIEWER
+   ============================================================ */
+function openLiveSheet(sheetType) {
+  // sheetType: 'main' | 'txn' | 'both'
+  const isBoth = sheetType === 'both';
+  const isTxn = sheetType === 'txn';
+  const mainPreview = SHEET_PREVIEW_URL;
+  const txnPreview = TXN_SHEET_PREVIEW_URL;
+  const mainEdit = SHEET_EDIT_URL;
+  const txnEdit = TXN_SHEET_EDIT_URL;
+
+  let title, body;
+  if (isBoth) {
+    title = 'Live Sheets — Both';
+    body = `
+      <div class="info-box" style="margin-bottom:10px;font-size:12px;">
+        🔴 <strong>Live view.</strong> Data is shown straight from Google Sheets. Tap a tab to switch.
+      </div>
+      <div class="live-sheet-tabs" id="liveSheetTabs">
+        <button type="button" class="live-sheet-tab active" data-sheet="main">
+          <i class="fas fa-table"></i> Main Sheet
+        </button>
+        <button type="button" class="live-sheet-tab" data-sheet="txn">
+          <i class="fas fa-receipt"></i> Transactions
+        </button>
+      </div>
+      <iframe id="liveSheetFrame" class="live-sheet-frame" src="${mainPreview}" title="Live Sheet"></iframe>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline" id="liveReloadBtn" style="flex:1;">
+          <i class="fas fa-sync-alt"></i> Reload
+        </button>
+        <button class="btn btn-primary" id="liveOpenBtn" style="flex:1;">
+          <i class="fas fa-external-link-alt"></i> Open in Editor
+        </button>
+      </div>
+    `;
+  } else {
+    title = isTxn ? 'Live Transaction Sheet' : 'Live Main Sheet';
+    body = `
+      <div class="info-box" style="margin-bottom:10px;font-size:12px;">
+        🔴 <strong>Live view.</strong> Data is shown straight from Google Sheets. Changes sync here in real time.
+      </div>
+      <iframe id="liveSheetFrame" class="live-sheet-frame" src="${isTxn ? txnPreview : mainPreview}" title="${title}"></iframe>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline" id="liveReloadBtn" style="flex:1;">
+          <i class="fas fa-sync-alt"></i> Reload
+        </button>
+        <button class="btn btn-primary" id="liveOpenBtn" style="flex:1;">
+          <i class="fas fa-external-link-alt"></i> Open in Editor
+        </button>
+      </div>
+    `;
+  }
+
+  const footer = `<button class="btn btn-ghost" id="liveCloseBtn">Close</button>`;
+
+  // Open full-height modal for better sheet view
+  openModal(title, body, footer, 'full');
+  $('modalBody').classList.add('no-pad');
+
+  // Track current sheet in "both" mode
+  let currentSheet = 'main';
+
+  $('liveCloseBtn').addEventListener('click', closeModal);
+
+  $('liveReloadBtn').addEventListener('click', () => {
+    const f = $('liveSheetFrame');
+    if (!f) return;
+    const base = isBoth
+      ? (currentSheet === 'main' ? mainPreview : txnPreview)
+      : (isTxn ? txnPreview : mainPreview);
+    f.src = base + '&_=' + Date.now();
+    showToast('Reloading…', 'info');
+  });
+
+  $('liveOpenBtn').addEventListener('click', () => {
+    const url = isBoth
+      ? (currentSheet === 'main' ? mainEdit : txnEdit)
+      : (isTxn ? txnEdit : mainEdit);
+    window.open(url, '_blank');
+  });
+
+  if (isBoth) {
+    document.querySelectorAll('#liveSheetTabs .live-sheet-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('#liveSheetTabs .live-sheet-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentSheet = tab.dataset.sheet;
+        const f = $('liveSheetFrame');
+        if (f) f.src = (currentSheet === 'main' ? mainPreview : txnPreview) + '&_=' + Date.now();
+      });
+    });
+  }
+}
+
+/* ============================================================
+   SYNC — GOOGLE SHEETS
+   ============================================================ */
+async function syncToGoogleSheets(silent = false) {
+  if (!APPS_SCRIPT_URL) { if (!silent) showToast('Google Sheets not configured.', 'error'); return; }
+  if (customers.length === 0) { if (!silent) showToast('No customers to sync.', 'warning'); return; }
+  const sub = $('sheetSyncSub');
+  const original = sub ? sub.textContent : '';
+  if (sub) sub.textContent = 'Syncing…';
+  try {
+    const sheetData = customers.map((c, i) => ({
+      ID: String(c.id),
+      Date: c.dateAdded || todayDDMMYYYY(),
+      Name: titleCase(c.name) || 'Unnamed',
+      Phone: c.phone || 'N/A',
+      Address: titleCase(c.address) || 'N/A',
+      Due: c.due || 0,
+      Paid: c.paid || 0,
+      'Current Due': getCurrentDue(c),
+      Status: getStatus(c),
+      Source: c.source || 'N/A',
+      Notes: (c.note || '').substring(0, 200),
+      'Last Sync': new Date().toLocaleString('en-GB')
+    }));
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'updateSheet',
+        spreadsheetId: SPREADSHEET_ID,
+        sheetName: 'Sheet1',
+        data: sheetData
+      }),
+      redirect: 'follow'
+    });
+    localStorage.setItem(LAST_SYNC_KEY, new Date().toISOString());
+    if (sub) sub.textContent = 'Last sync: ' + new Date().toLocaleTimeString();
+    if (!silent) showToast(`✅ ${sheetData.length} customers synced`, 'success');
+  } catch (e) {
+    if (sub) sub.textContent = original;
+    if (!silent) showToast('Sync failed: ' + e.message, 'error');
+  }
+}
+
+async function pullFromGoogleSheets() {
+  if (!APPS_SCRIPT_URL) { showToast('Google Sheets not configured.', 'error'); return; }
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'getSheetData',
+        spreadsheetId: SPREADSHEET_ID,
+        sheetName: 'Sheet1'
+      }),
+      redirect: 'follow'
+    });
+    const raw = await res.text();
+    const json = JSON.parse(raw);
+    if (!json.success || !Array.isArray(json.data)) throw new Error(json.error || 'Invalid data');
+
+    const seenIds = new Set();
+    const pulled = [];
+
+    json.data.forEach((r, idx) => {
+      const name = (r.Name !== undefined && r.Name !== null) ? String(r.Name).trim() : '';
+      if (!name) return;
+
+      let id = normalizeId(r.ID);
+      let tries = 0;
+      while (seenIds.has(id) && tries < 50) {
+        id = id + '-' + Math.floor(Math.random() * 1000);
+        tries++;
+      }
+      if (seenIds.has(id)) id = generateId() + '-' + idx;
+      seenIds.add(id);
+
+      const phoneRaw = (r.Phone !== undefined && r.Phone !== null) ? String(r.Phone) : '';
+      const addrRaw  = (r.Address !== undefined && r.Address !== null) ? String(r.Address) : '';
+      const srcRaw   = (r.Source !== undefined && r.Source !== null) ? String(r.Source) : '';
+      const noteRaw  = (r.Notes !== undefined && r.Notes !== null) ? String(r.Notes) : '';
+
+      pulled.push({
+        id: id,
+        dateAdded: r.Date ? String(r.Date) : todayDDMMYYYY(),
+        name: name,
+        phone: phoneRaw && phoneRaw.toUpperCase() !== 'N/A' ? phoneRaw : '',
+        address: addrRaw && addrRaw.toUpperCase() !== 'N/A' ? addrRaw : '',
+        due: Math.max(0, Math.round(Number(r.Due)) || 0),
+        paid: Math.max(0, Math.round(Number(r.Paid)) || 0),
+        source: srcRaw && srcRaw.toUpperCase() !== 'N/A' ? srcRaw : '',
+        note: noteRaw,
+        transactionHistory: []
+      });
+    });
+
+    if (pulled.length === 0) {
+      showToast('No valid customer data found in sheet.', 'warning');
+      return;
+    }
+
+    if (!confirm(`Pull ${pulled.length} customers from Google Sheet?\n\nThis will REPLACE all local data. Continue?`)) return;
+
+    customers = pulled;
+    saveData();
+    refreshAddressFilter();
+    renderCustomers();
+    renderReports();
+    showToast(`✅ ${pulled.length} customers pulled — ready to edit/pay/print.`, 'success');
+  } catch (e) {
+    console.error('Pull error:', e);
+    showToast('Pull failed: ' + e.message, 'error');
+  }
+}
+
+async function fetchTxnFromSheet(silent = false) {
+  if (!TXN_APPS_SCRIPT_URL) { txnOnline = false; return null; }
+  try {
+    const res = await fetch(TXN_APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'getTxnData', spreadsheetId: TXN_SPREADSHEET_ID }),
+      redirect: 'follow'
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const raw = await res.text();
+    const json = JSON.parse(raw);
+    if (!json.success || !Array.isArray(json.data)) throw new Error(json.error || 'Invalid');
+    txnSheetData = json.data;
+    txnOnline = true;
+    return txnSheetData;
+  } catch (e) {
+    txnOnline = false;
+    if (!silent) showToast('Sheet fetch failed: ' + e.message, 'error');
+    return null;
+  }
+}
+async function pushTxnBatchToSheet(records, silent = false) {
+  if (!TXN_APPS_SCRIPT_URL || !records || !records.length) return false;
+  try {
+    const res = await fetch(TXN_APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'addTxnBatch', spreadsheetId: TXN_SPREADSHEET_ID, records }),
+      redirect: 'follow'
+    });
+    const raw = await res.text();
+    const json = JSON.parse(raw);
+    if (!json.success) throw new Error(json.error || 'Batch push failed');
+    return true;
+  } catch (e) {
+    if (!silent) showToast('Batch push failed: ' + e.message, 'error');
+    return false;
+  }
+}
+async function pushTxnToSheet(record, silent = true) {
+  if (!TXN_APPS_SCRIPT_URL) return false;
+  try {
+    const res = await fetch(TXN_APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'addTxn', spreadsheetId: TXN_SPREADSHEET_ID, record }),
+      redirect: 'follow'
+    });
+    const raw = await res.text();
+    const json = JSON.parse(raw);
+    if (!json.success) throw new Error(json.error || 'Push failed');
+    return true;
+  } catch (e) {
+    if (!silent) showToast('Txn push failed: ' + e.message, 'error');
+    return false;
+  }
+}
+async function uploadAllLocalTxns() {
+  const records = [];
+  customers.forEach(c => {
+    (c.transactionHistory || []).forEach(t => {
+      records.push({
+        TxnID: 'TXN-' + Date.now() + '-' + Math.floor(Math.random()*10000),
+        Timestamp: (parseDate(t.date) || new Date()).toISOString(),
+        CustomerID: String(c.id),
+        CustomerName: c.name || '',
+        CustomerPhone: c.phone || '',
+        CustomerAddress: c.address || '',
+        Type: t.type || '',
+        Amount: Number(t.amount) || 0,
+        Note: t.note || ''
+      });
+    });
+  });
+  if (records.length === 0) { showToast('No local transactions to upload.', 'warning'); return; }
+  if (!confirm(`Upload ${records.length} local transactions to Google Sheet?`)) return;
+  const ok = await pushTxnBatchToSheet(records, false);
+  if (ok) {
+    showToast(`✅ ${records.length} transactions uploaded.`, 'success');
+    await fetchTxnFromSheet(true);
+    renderTransactions();
+  }
+}
+function buildTxnRecord(c, txn) {
+  return {
+    TxnID: 'TXN-' + Date.now() + '-' + Math.floor(Math.random()*10000),
+    Timestamp: new Date().toISOString(),
+    CustomerID: String(c.id),
+    CustomerName: c.name || '',
+    CustomerPhone: c.phone || '',
+    CustomerAddress: c.address || '',
+    Type: txn.type || '',
+    Amount: Number(txn.amount) || 0,
+    Note: txn.note || ''
+  };
+}
+function logTxn(c, txn) {
+  c.transactionHistory = c.transactionHistory || [];
+  c.transactionHistory.unshift({
+    date: new Date().toLocaleString(),
+    type: txn.type || '',
+    amount: Number(txn.amount) || 0,
+    note: txn.note || ''
+  });
+  if (c.transactionHistory.length > 50) c.transactionHistory.length = 50;
+  if (TXN_APPS_SCRIPT_URL) {
+    const rec = buildTxnRecord(c, txn);
+    pushTxnToSheet(rec, true).then(ok => {
+      if (ok) txnSheetData.unshift(rec);
+    });
+  }
+}
+
+/* ============================================================
+   TELEGRAM
+   ============================================================ */
+function getTgToken() {
+  return localStorage.getItem(TG_TOKEN_KEY) || TELEGRAM_BOT_TOKEN;
+}
+function getTgChat() {
+  return localStorage.getItem(TG_CHAT_KEY) || '';
+}
+function updateTgStatus() {
+  const token = getTgToken();
+  const chat = getTgChat();
+  const sub = $('tgStatusSub');
+  const hdrTg = $('hdrTelegram');
+  if (hdrTg) {
+    if (token && chat) hdrTg.classList.add('tg-active');
+    else hdrTg.classList.remove('tg-active');
+  }
+  if (!sub) return;
+  if (!token || !chat) {
+    sub.textContent = 'Setup needed — Bot: ' + TELEGRAM_BOT_HANDLE;
+    return;
+  }
+  const last = localStorage.getItem(LAST_TG_KEY);
+  if (!last) { sub.textContent = 'Ready · ' + TELEGRAM_BOT_HANDLE; return; }
+  const mins = Math.floor((Date.now() - parseInt(last,10)) / 60000);
+  if (mins < 1) sub.textContent = 'Backed up: Just now';
+  else if (mins < 60) sub.textContent = `Backed up: ${mins}m ago`;
+  else if (mins < 1440) sub.textContent = `Backed up: ${Math.floor(mins/60)}h ago`;
+  else sub.textContent = `Backed up: ${Math.floor(mins/1440)}d ago`;
+}
+async function sendTelegramBackup() {
+  const token = getTgToken();
+  const chat = getTgChat();
+  if (!token) { showToast('Bot token missing.', 'error'); return; }
+  if (!chat) {
+    showToast('Telegram chat not configured. Opening setup…', 'warning');
+    openTelegramSetup();
+    return;
+  }
+  if (customers.length === 0) { showToast('No customers to backup.', 'warning'); return; }
+  showToast('Sending to Telegram…', 'info');
+  const payload = {
+    customers,
+    timestamp: new Date().toISOString(),
+    count: customers.length,
+    version: '1.4',
+    bot: TELEGRAM_BOT_HANDLE
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const fd = new FormData();
+  fd.append('chat_id', chat);
+  fd.append('document', blob, `rgce_backup_${Date.now()}.json`);
+  fd.append('caption', `📊 ${customers.length} customers | ${new Date().toLocaleDateString()} | ${TELEGRAM_BOT_HANDLE}`);
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendDocument`, {
+      method: 'POST', body: fd
+    });
+    const data = await res.json();
+    if (data.ok) {
+      localStorage.setItem(LAST_TG_KEY, Date.now().toString());
+      updateTgStatus();
+      showToast('✅ Telegram backup sent.', 'success');
+    } else {
+      showToast('Telegram error: ' + (data.description || 'unknown'), 'error');
+    }
+  } catch (e) {
+    showToast('Telegram failed: ' + e.message, 'error');
+  }
+}
+
+/* ============================================================
+   MODAL SYSTEM
+   ============================================================ */
+function openModal(title, body, footer, size) {
+  const overlay = $('modalOverlay');
+  const sheet = $('modalSheet');
+  const bodyEl = $('modalBody');
+  bodyEl.classList.remove('no-pad');
+  sheet.classList.remove('wide', 'full');
+  if (size === 'wide') sheet.classList.add('wide');
+  if (size === 'full') sheet.classList.add('full');
+
+  $('modalTitle').textContent = title;
+  bodyEl.innerHTML = body || '';
+  $('modalFooter').innerHTML = footer || '';
+  overlay.classList.remove('open');
+  void overlay.offsetWidth;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  const overlay = $('modalOverlay');
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  $('modalBody').classList.remove('no-pad');
+  $('modalSheet').classList.remove('wide', 'full');
+  // clear any iframe to stop background loading
+  const f = $('liveSheetFrame');
+  if (f) f.src = 'about:blank';
+}
+function bindModalClose() {
+  const closeBtn = $('modalClose');
+  if (closeBtn) closeBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); closeModal(); });
+  const overlay = $('modalOverlay');
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+  });
+}
+
+/* ============================================================
+   CUSTOMER FORM (ADD / EDIT)
+   ============================================================ */
+function openAddModal() { openCustomerForm(null); }
+function openEditModal(id) {
+  const c = findCustomer(id);
+  if (!c) { showToast('Customer not found.', 'error'); return; }
+  openCustomerForm(c);
+}
+function openCustomerForm(existing) {
+  const isEdit = !!existing;
+  const addrList = [...FIXED_ADDRESSES];
+  const isCustomAddr = existing && existing.address && !addrList.includes(existing.address);
+  const isCustomSrc = existing && existing.source && !FIXED_SOURCES.includes(existing.source);
+
+  const body = `
+    <div class="form-group">
+      <label>Customer Name <span class="req">*</span></label>
+      <input type="text" id="fName" value="${escapeHtml(existing?.name || '')}" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Phone Number</label>
+      <input type="tel" id="fPhone" value="${escapeHtml(existing?.phone || '')}" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Address</label>
+      <select id="fAddress">
+        <option value="">— Select —</option>
+        ${addrList.map(a => `<option value="${escapeHtml(a)}" ${existing?.address === a ? 'selected' : ''}>${escapeHtml(a)}</option>`).join('')}
+        <option value="__custom__" ${isCustomAddr ? 'selected' : ''}>Other (custom)</option>
+      </select>
+    </div>
+    <div class="form-group" id="fCustomAddrGroup" style="display:${isCustomAddr ? 'block' : 'none'};">
+      <label>Custom Address</label>
+      <input type="text" id="fCustomAddr" value="${isCustomAddr ? escapeHtml(existing.address) : ''}">
+    </div>
+    <div class="form-group">
+      <label>Source</label>
+      <select id="fSource">
+        <option value="">— Select —</option>
+        ${FIXED_SOURCES.map(s => `<option value="${s}" ${existing?.source === s ? 'selected' : ''}>${s}</option>`).join('')}
+        <option value="__custom__" ${isCustomSrc ? 'selected' : ''}>Other (custom)</option>
+      </select>
+    </div>
+    <div class="form-group" id="fCustomSrcGroup" style="display:${isCustomSrc ? 'block' : 'none'};">
+      <label>Custom Source</label>
+      <input type="text" id="fCustomSrc" value="${isCustomSrc ? escapeHtml(existing.source) : ''}">
+    </div>
+    <div class="form-group">
+      <label>Total Due Amount</label>
+      <input type="number" id="fDue" min="0" step="1" value="${existing?.due ?? ''}">
+    </div>
+    <div class="form-group">
+      <label>Paid Amount</label>
+      <input type="number" id="fPaid" min="0" step="1" value="${existing?.paid ?? ''}">
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="fNote" rows="3">${escapeHtml(existing?.note || '')}</textarea>
+    </div>
+  `;
+  const footer = `
+    <button class="btn btn-ghost" id="formCancel">Cancel</button>
+    <button class="btn btn-primary" id="formSave">${isEdit ? 'Save Changes' : 'Add Customer'}</button>
+  `;
+  openModal(isEdit ? 'Edit Customer' : 'Add New Customer', body, footer);
+
+  $('formCancel').addEventListener('click', closeModal);
+  $('fAddress').addEventListener('change', (e) => {
+    $('fCustomAddrGroup').style.display = e.target.value === '__custom__' ? 'block' : 'none';
+  });
+  $('fSource').addEventListener('change', (e) => {
+    $('fCustomSrcGroup').style.display = e.target.value === '__custom__' ? 'block' : 'none';
+  });
+  $('fName').addEventListener('input', (e) => {
+    const pos = e.target.selectionStart;
+    e.target.value = titleCase(e.target.value);
+    e.target.setSelectionRange(pos, pos);
+  });
+
+  $('formSave').addEventListener('click', () => {
+    const name = $('fName').value.trim();
+    if (!name) { showToast('Name is required.', 'error'); return; }
+
+    let addr = $('fAddress').value;
+    if (addr === '__custom__') addr = $('fCustomAddr').value.trim();
+    let src = $('fSource').value;
+    if (src === '__custom__') src = $('fCustomSrc').value.trim();
+
+    const due = Math.max(0, parseInt($('fDue').value, 10) || 0);
+    const paid = Math.max(0, parseInt($('fPaid').value, 10) || 0);
+
+    if (isEdit) {
+      const oldDue = existing.due || 0;
+      const oldPaid = existing.paid || 0;
+      const changes = [];
+      if (due !== oldDue) changes.push(`Due ${due > oldDue ? 'increased' : 'decreased'} by ${Math.abs(due - oldDue)}`);
+      if (paid !== oldPaid) changes.push(`Paid ${paid > oldPaid ? 'increased' : 'decreased'} by ${Math.abs(paid - oldPaid)}`);
+
+      existing.name = titleCase(name);
+      existing.phone = $('fPhone').value.trim();
+      existing.address = addr;
+      existing.source = src;
+      existing.due = due;
+      existing.paid = paid;
+      existing.note = $('fNote').value;
+
+      if (changes.length > 0) {
+        logTxn(existing, { type: 'Edit Adjustment', amount: 0, note: 'Manual Edit: ' + changes.join(', ') });
+      }
+
+      saveData();
+      markCustomerChanged(existing.id);
+      showToast('Customer updated.', 'success');
+    } else {
+      const newC = {
+        id: generateId(),
+        dateAdded: todayDDMMYYYY(),
+        name: titleCase(name),
+        phone: $('fPhone').value.trim(),
+        address: addr,
+        source: src,
+        due,
+        paid,
+        note: $('fNote').value,
+        transactionHistory: []
+      };
+      if (due > 0 || paid > 0) {
+        logTxn(newC, {
+          type: due > 0 ? 'Due Added' : 'Payment Received',
+          amount: due > 0 ? due : paid,
+          note: 'Initial record created'
+        });
+      }
+      customers.push(newC);
+      saveData();
+      markCustomerChanged(newC.id);
+      showToast('Customer added.', 'success');
+    }
+    refreshAddressFilter();
+    renderCustomers();
+    closeModal();
+  });
+
+  setTimeout(() => { const el = $('fName'); if (el) el.focus(); }, 300);
+}
+
+/* ============================================================
+   CUSTOMER DETAIL
+   ============================================================ */
+function openDetailModal(id) {
+  const c = findCustomer(id);
+  if (!c) return;
+  const status = getStatus(c);
+  const cd = getCurrentDue(c);
+
+  const body = `
+    <div class="preview-grid">
+      <div class="preview-item"><div class="pv-label">ID</div><div class="pv-value">${escapeHtml(c.id)}</div></div>
+      <div class="preview-item"><div class="pv-label">Date Added</div><div class="pv-value">${escapeHtml(c.dateAdded || '—')}</div></div>
+      <div class="preview-item"><div class="pv-label">Phone</div><div class="pv-value">${escapeHtml(c.phone || '—')}</div></div>
+      <div class="preview-item"><div class="pv-label">Address</div><div class="pv-value">${escapeHtml(c.address || '—')}</div></div>
+      <div class="preview-item"><div class="pv-label">Source</div><div class="pv-value">${escapeHtml(c.source || '—')}</div></div>
+      <div class="preview-item"><div class="pv-label">Status</div><div class="pv-value"><span class="status-badge ${statusClassKey(status)}">${status}</span></div></div>
+    </div>
+    <div class="amount-blocks">
+      <div class="amount-block">
+        <div class="ab-label">Total Due</div>
+        <div class="ab-value">${formatMoneyOrZero(c.due||0)}</div>
+      </div>
+      <div class="amount-block">
+        <div class="ab-label">Total Paid</div>
+        <div class="ab-value" style="color:var(--success);">${formatMoneyOrZero(c.paid||0)}</div>
+      </div>
+      <div class="amount-block">
+        <div class="ab-label">Current Due</div>
+        <div class="ab-value" style="color:var(--danger);">${formatMoneyOrZero(cd)}</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;">
+      <div class="pv-label" style="margin-bottom:6px;">Notes</div>
+      <div class="note-box">${escapeHtml(c.note || '—')}</div>
+      ${c.note ? `<button class="btn btn-ghost" id="dClearNote" style="margin-top:8px;font-size:12px;padding:8px 12px;min-height:36px;"><i class="fas fa-eraser"></i> Clear Note</button>` : ''}
+    </div>
+    ${c.transactionHistory && c.transactionHistory.length > 0 ? `
+      <div style="margin-top:14px;">
+        <div class="pv-label" style="margin-bottom:6px;">Recent Transactions (${c.transactionHistory.length})</div>
+        ${c.transactionHistory.slice(0, 5).map(t => `
+          <div style="font-size:11px;padding:6px 8px;background:var(--panel-alt);border-radius:6px;margin-bottom:4px;">
+            <strong>${escapeHtml(t.type)}</strong> · ${formatMoneyOrZero(t.amount)}
+            <div style="color:var(--muted);font-size:10px;margin-top:2px;">${escapeHtml(t.date)}</div>
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
+  `;
+  const footer = `
+    <button class="btn btn-ghost" id="dClose" style="flex:0 0 auto;min-width:46px;"><i class="fas fa-times"></i></button>
+    <button class="btn btn-outline" id="dPrint"><i class="fas fa-print"></i></button>
+    <button class="btn btn-outline" id="dEdit"><i class="fas fa-edit"></i></button>
+    <button class="btn btn-success" id="dPay"><i class="fas fa-money-bill"></i> Pay</button>
+    <button class="btn btn-danger" id="dDel"><i class="fas fa-trash"></i></button>
+  `;
+  openModal(c.name, body, footer);
+
+  $('dClose').addEventListener('click', closeModal);
+  $('dPrint').addEventListener('click', () => { closeModal(); setTimeout(() => openPrintModal(id), 220); });
+  $('dEdit').addEventListener('click',  () => { closeModal(); setTimeout(() => openEditModal(id), 220); });
+  $('dPay').addEventListener('click',   () => { closeModal(); setTimeout(() => openPaymentModal(id), 220); });
+  $('dDel').addEventListener('click',   () => { closeModal(); setTimeout(() => openDeleteModal(id), 220); });
+
+  const clearBtn = $('dClearNote');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      c.note = '';
+      saveData();
+      markCustomerChanged(c.id);
+      renderCustomers();
+      closeModal();
+      showToast('Note cleared.', 'success');
+    });
+  }
+}
+
+/* ============================================================
+   PAYMENT
+   ============================================================ */
+function openPaymentModal(id) {
+  const c = findCustomer(id);
+  if (!c) { showToast('Customer not found.', 'error'); return; }
+  const cd = getCurrentDue(c);
+
+  const body = `
+    <div class="amount-blocks">
+      <div class="amount-block">
+        <div class="ab-label">Current Due</div>
+        <div class="ab-value" style="color:var(--danger);">${formatMoneyOrZero(cd)}</div>
+      </div>
+      <div class="amount-block">
+        <div class="ab-label">Total Paid</div>
+        <div class="ab-value" style="color:var(--success);">${formatMoneyOrZero(c.paid||0)}</div>
+      </div>
+      <div class="amount-block">
+        <div class="ab-label">Total Due</div>
+        <div class="ab-value">${formatMoneyOrZero(c.due||0)}</div>
+      </div>
+    </div>
+    <div class="segmented" id="payTypeSeg">
+      <button type="button" class="active" data-type="receive">Receive</button>
+      <button type="button" data-type="due">Due Added</button>
+      <button type="button" data-type="adjust">Adjustment</button>
+    </div>
+    <div id="adjustDirWrap" style="display:none;margin-bottom:12px;">
+      <div class="segmented" id="adjustDirSeg" style="margin-bottom:0;">
+        <button type="button" class="active" data-dir="increase">Increase</button>
+        <button type="button" data-dir="decrease">Decrease</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Amount</label>
+      <input type="number" id="payAmount" min="0" step="1" value="${cd}">
+    </div>
+    <div class="form-group">
+      <label>Payment Note</label>
+      <textarea id="payNote" rows="2" placeholder="Optional note…"></textarea>
+    </div>
+  `;
+  const footer = `
+    <button class="btn btn-ghost" id="payCancel">Cancel</button>
+    <button class="btn btn-primary" id="paySave">Save Payment</button>
+  `;
+  openModal('Payment – ' + c.name, body, footer);
+
+  let payType = 'receive';
+  let adjustDir = 'increase';
+
+  $('payTypeSeg').querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $('payTypeSeg').querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      payType = btn.dataset.type;
+      $('adjustDirWrap').style.display = payType === 'adjust' ? 'block' : 'none';
+      $('payAmount').value = payType === 'receive' ? cd : '';
+    });
+  });
+  $('adjustDirSeg').querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $('adjustDirSeg').querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      adjustDir = btn.dataset.dir;
+    });
+  });
+
+  $('payCancel').addEventListener('click', closeModal);
+
+  $('paySave').addEventListener('click', () => {
+    const amount = parseInt($('payAmount').value, 10);
+    const note = $('payNote').value.trim();
+    if (isNaN(amount) || amount <= 0) { showToast('Enter a valid amount.', 'error'); return; }
+
+    let type = '';
+    let applied = amount;
+
+    if (payType === 'receive') {
+      if (amount > cd) { applied = cd; showToast('Payment capped at current due.', 'warning'); }
+      c.paid = (c.paid || 0) + applied;
+      type = 'Payment Received';
+    } else if (payType === 'due') {
+      c.due = (c.due || 0) + amount;
+      type = 'Due Added';
+    } else {
+      if (adjustDir === 'increase') c.due = (c.due || 0) + amount;
+      else {
+        c.due = Math.max(0, (c.due || 0) - amount);
+        if (c.due < (c.paid || 0)) c.paid = c.due;
+      }
+      type = 'Adjustment';
+    }
+
+    logTxn(c, { type, amount: applied, note });
+    c.note = `[${new Date().toLocaleDateString()}] ${type}: ${applied}${note ? ' – ' + note : ''}\n` + (c.note || '');
+    saveData();
+    markCustomerChanged(c.id);
+    renderCustomers();
+    closeModal();
+    showToast('Payment saved.', 'success');
+  });
+}
+
+/* ============================================================
+   DELETE
+   ============================================================ */
+function openDeleteModal(id) {
+  const c = findCustomer(id);
+  if (!c) { showToast('Customer not found.', 'error'); return; }
+  const body = `
+    <div class="warning-box">
+      Delete <strong>${escapeHtml(c.name)}</strong>? This cannot be undone.
+    </div>
+    <div class="form-group">
+      <label>Admin Password <span class="req">*</span></label>
+      <input type="password" id="delPass" autocomplete="off">
+      <div class="password-error" id="delPassErr">Incorrect password.</div>
+    </div>
+  `;
+  const footer = `
+    <button class="btn btn-ghost" id="delCancel">Cancel</button>
+    <button class="btn btn-danger" id="delConfirm">Delete</button>
+  `;
+  openModal('Delete Customer', body, footer);
+
+  $('delCancel').addEventListener('click', closeModal);
+  $('delConfirm').addEventListener('click', () => {
+    if ($('delPass').value !== PWD.delete) {
+      $('delPassErr').classList.add('visible');
+      return;
+    }
+    if (c.transactionHistory && c.transactionHistory.length > 0) {
+      c.note = (c.note || '') + '\n\n--- Transaction History ---\n' +
+        c.transactionHistory.map(t => `${t.date} | ${t.type} | ${t.amount} | ${t.note||''}`).join('\n');
+    }
+    const removeKey = String(id);
+    customers = customers.filter(x => String(x.id) !== removeKey);
+    saveData();
+    refreshAddressFilter();
+    renderCustomers();
+    closeModal();
+    showToast('Customer deleted.', 'success');
+  });
+  setTimeout(() => { const el = $('delPass'); if (el) el.focus(); }, 300);
+}
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+function openPrintModal(id) {
+  const c = findCustomer(id);
+  if (!c) { showToast('Customer not found.', 'error'); return; }
+  const body = `
+    <div class="info-box">Choose what to print. Your browser's print dialog will appear.</div>
+    <button type="button" class="btn btn-outline btn-block" id="prCustomer" style="margin-bottom:8px;">
+      <i class="fas fa-file-invoice"></i> Customer Copy
+    </button>
+    <button type="button" class="btn btn-outline btn-block" id="prStore" style="margin-bottom:8px;">
+      <i class="fas fa-store"></i> Store Copy
+    </button>
+    <button type="button" class="btn btn-primary btn-block" id="prBoth" style="margin-bottom:8px;">
+      <i class="fas fa-copy"></i> Both Copies (Cut in Half)
+    </button>
+    <button type="button" class="btn btn-ghost btn-block" id="prHistory">
+      <i class="fas fa-history"></i> Payment History
+    </button>
+  `;
+  openModal('Print – ' + c.name, body, '');
+
+  $('prCustomer').addEventListener('click', () => { closeModal(); setTimeout(() => printReceipt(id, 'customer'), 150); });
+  $('prStore').addEventListener('click',    () => { closeModal(); setTimeout(() => printReceipt(id, 'store'), 150); });
+  $('prBoth').addEventListener('click',     () => { closeModal(); setTimeout(() => printReceipt(id, 'both'), 150); });
+  $('prHistory').addEventListener('click',  () => { closeModal(); setTimeout(() => printHistory(id), 150); });
+}
+
+function printReceipt(id, copyType) {
+  const c = findCustomer(id);
+  if (!c) return;
+  const cd = getCurrentDue(c);
+  const status = getStatus(c);
+
+  const card = (label) => `
+    <div style="border:2px double #000;padding:20px;font-family:'Times New Roman',Georgia,serif;color:#000;">
+      <div style="text-align:right;font-size:11px;">FORM NO. RGCE/01</div>
+      <h2 style="text-align:center;border-bottom:1px solid #000;padding-bottom:6px;margin:6px 0;">
+        ROZA GIFT CORNER &amp; ELECTRIC
+      </h2>
+      <p style="text-align:center;font-size:12px;margin:4px 0;">Gifts • Electrical • Cosmetics — Under One Roof</p>
+      <p style="text-align:center;font-size:11px;margin:4px 0;">
+        Moshjid Market, Naohata Mor, Mohadevpur, Naogaon | +8801715986646
+      </p>
+      <hr style="border-top:1px solid #000;">
+      <h3 style="text-align:center;margin:10px 0;">${label}</h3>
+      <table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;">
+        <tr><td style="border:1px solid #000;padding:4px;font-weight:700;width:40%;">Customer Name</td><td style="border:1px solid #000;padding:4px;">${escapeHtml(c.name)}</td></tr>
+        <tr><td style="border:1px solid #000;padding:4px;font-weight:700;">Phone</td><td style="border:1px solid #000;padding:4px;">${escapeHtml(c.phone || '—')}</td></tr>
+        <tr><td style="border:1px solid #000;padding:4px;font-weight:700;">Address</td><td style="border:1px solid #000;padding:4px;">${escapeHtml(c.address || '—')}</td></tr>
+        <tr><td style="border:1px solid #000;padding:4px;font-weight:700;">Date</td><td style="border:1px solid #000;padding:4px;">${new Date().toLocaleDateString()}</td></tr>
+      </table>
+      <table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;">
+        <tr><td style="border:1px solid #000;padding:4px;font-weight:700;">Total Due</td><td style="border:1px solid #000;padding:4px;">${formatMoneyOrZero(c.due||0)}</td></tr>
+        <tr><td style="border:1px solid #000;padding:4px;font-weight:700;">Total Paid</td><td style="border:1px solid #000;padding:4px;">${formatMoneyOrZero(c.paid||0)}</td></tr>
+        <tr><td style="border:1px solid #000;padding:4px;font-weight:700;">Current Due</td><td style="border:1px solid #000;padding:4px;">${formatMoneyOrZero(cd)}</td></tr>
+        <tr><td style="border:1px solid #000;padding:4px;font-weight:700;">Status</td><td style="border:1px solid #000;padding:4px;">${status}</td></tr>
+      </table>
+      <p style="text-align:center;font-size:11px;margin-top:16px;">
+        This is a computer-generated document. No signature required.
+      </p>
+    </div>
+  `;
+
+  const html = copyType === 'both'
+    ? card('CUSTOMER COPY') + '<div style="text-align:center;margin:20px 0;font-size:14px;">✂ CUT HERE ✂</div>' + card('STORE COPY – ACCOUNTING RECORD')
+    : card(copyType === 'customer' ? 'CUSTOMER COPY' : 'STORE COPY – ACCOUNTING RECORD');
+  triggerPrint(html);
+}
+
+function printHistory(id) {
+  const c = findCustomer(id);
+  if (!c) return;
+  const html = `
+    <div style="border:2px double #000;padding:20px;font-family:'Times New Roman',Georgia,serif;color:#000;">
+      <h2 style="text-align:center;">ROZA GIFT CORNER &amp; ELECTRIC</h2>
+      <h3 style="text-align:center;">PAYMENT HISTORY – ${escapeHtml(c.name)}</h3>
+      <p><strong>ID:</strong> ${escapeHtml(c.id)} | <strong>Date Added:</strong> ${escapeHtml(c.dateAdded || '—')}</p>
+      <table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:12px;">
+        <thead><tr>
+          <th style="border:1px solid #000;padding:4px;">SL</th>
+          <th style="border:1px solid #000;padding:4px;">Date &amp; Time</th>
+          <th style="border:1px solid #000;padding:4px;">Type</th>
+          <th style="border:1px solid #000;padding:4px;">Amount</th>
+          <th style="border:1px solid #000;padding:4px;">Notes</th>
+        </tr></thead>
+        <tbody>
+          ${(c.transactionHistory||[]).map((t,i) => `
+            <tr>
+              <td style="border:1px solid #000;padding:4px;">${i+1}</td>
+              <td style="border:1px solid #000;padding:4px;">${escapeHtml(t.date)}</td>
+              <td style="border:1px solid #000;padding:4px;">${escapeHtml(t.type)}</td>
+              <td style="border:1px solid #000;padding:4px;text-align:right;">${formatMoneyOrZero(t.amount)}</td>
+              <td style="border:1px solid #000;padding:4px;">${escapeHtml(t.note||'')}</td>
+            </tr>
+          `).join('') || '<tr><td colspan="5" style="text-align:center;border:1px solid #000;padding:8px;">No transaction history</td></tr>'}
+        </tbody>
+      </table>
+      <p style="text-align:center;font-size:11px;">This is a computer-generated document. No signature required.</p>
+    </div>
+  `;
+  triggerPrint(html);
+}
+
+function printFilteredReport() {
+  applyFilters();
+  const html = `
+    <div style="border:2px double #000;padding:20px;font-family:'Times New Roman',Georgia,serif;color:#000;">
+      <h2 style="text-align:center;">ROZA GIFT CORNER &amp; ELECTRIC</h2>
+      <h3 style="text-align:center;">FILTERED CUSTOMER REPORT</h3>
+      <p style="font-size:11px;">Generated: ${new Date().toLocaleString()}</p>
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead><tr>
+          <th style="border:1px solid #000;padding:3px;">SL</th>
+          <th style="border:1px solid #000;padding:3px;">Name</th>
+          <th style="border:1px solid #000;padding:3px;">Address</th>
+          <th style="border:1px solid #000;padding:3px;">Source</th>
+          <th style="border:1px solid #000;padding:3px;">Due</th>
+          <th style="border:1px solid #000;padding:3px;">Paid</th>
+          <th style="border:1px solid #000;padding:3px;">Current</th>
+          <th style="border:1px solid #000;padding:3px;">Status</th>
+        </tr></thead>
+        <tbody>
+          ${filteredCustomers.map((c,i) => `
+            <tr>
+              <td style="border:1px solid #000;padding:3px;">${i+1}</td>
+              <td style="border:1px solid #000;padding:3px;">${escapeHtml(c.name)}</td>
+              <td style="border:1px solid #000;padding:3px;">${escapeHtml(c.address||'')}</td>
+              <td style="border:1px solid #000;padding:3px;">${escapeHtml(c.source||'')}</td>
+              <td style="border:1px solid #000;padding:3px;text-align:right;">${formatMoneyOrZero(c.due||0)}</td>
+              <td style="border:1px solid #000;padding:3px;text-align:right;">${formatMoneyOrZero(c.paid||0)}</td>
+              <td style="border:1px solid #000;padding:3px;text-align:right;">${formatMoneyOrZero(getCurrentDue(c))}</td>
+              <td style="border:1px solid #000;padding:3px;">${getStatus(c)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      <p style="text-align:center;font-size:11px;margin-top:16px;">This is a computer-generated document. No signature required.</p>
+    </div>
+  `;
+  triggerPrint(html);
+}
+
+function printManualReport() {
+  applyFilters();
+  const totalDue = filteredCustomers.reduce((s,c) => s + (c.due||0), 0);
+  const html = `
+    <div style="border:2px double #000;padding:20px;font-family:'Times New Roman',Georgia,serif;color:#000;">
+      <h2 style="text-align:center;">ROZA GIFT CORNER &amp; ELECTRIC</h2>
+      <h3 style="text-align:center;">MANUAL COLLECTION SHEET</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead><tr>
+          <th style="border:1px solid #000;padding:3px;">SL</th>
+          <th style="border:1px solid #000;padding:3px;">Name</th>
+          <th style="border:1px solid #000;padding:3px;">Address</th>
+          <th style="border:1px solid #000;padding:3px;">Source</th>
+          <th style="border:1px solid #000;padding:3px;">Total Due</th>
+          <th style="border:1px solid #000;padding:3px;">Paid</th>
+          <th style="border:1px solid #000;padding:3px;">Current</th>
+        </tr></thead>
+        <tbody>
+          ${filteredCustomers.map((c,i) => `
+            <tr>
+              <td style="border:1px solid #000;padding:3px;">${i+1}</td>
+              <td style="border:1px solid #000;padding:3px;">${escapeHtml(c.name)}</td>
+              <td style="border:1px solid #000;padding:3px;">${escapeHtml(c.address||'')}</td>
+              <td style="border:1px solid #000;padding:3px;">${escapeHtml(c.source||'')}</td>
+              <td style="border:1px solid #000;padding:3px;text-align:right;">${formatMoneyOrZero(c.due||0)}</td>
+              <td style="border:1px solid #000;padding:3px;height:24px;"></td>
+              <td style="border:1px solid #000;padding:3px;height:24px;"></td>
+            </tr>
+          `).join('')}
+          <tr style="font-weight:700;">
+            <td colspan="4" style="border:1px solid #000;padding:3px;text-align:right;">TOTALS</td>
+            <td style="border:1px solid #000;padding:3px;text-align:right;">${formatMoneyOrZero(totalDue)}</td>
+            <td style="border:1px solid #000;padding:3px;"></td>
+            <td style="border:1px solid #000;padding:3px;"></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="text-align:center;font-size:11px;margin-top:16px;">This is a computer-generated document. No signature required.</p>
+    </div>
+  `;
+  triggerPrint(html);
+}
+
+function printSummaryReport() {
+  const total = customers.length;
+  const totalDue = customers.reduce((s,c) => s + (c.due||0), 0);
+  const totalPaid = customers.reduce((s,c) => s + (c.paid||0), 0);
+  const net = customers.reduce((s,c) => s + getCurrentDue(c), 0);
+  const withDue = customers.filter(c => { const s = getStatus(c); return s === 'Due' || s === 'Partial Paid'; }).length;
+  const paid = customers.filter(c => getStatus(c) === 'Paid').length;
+  const partial = customers.filter(c => getStatus(c) === 'Partial Paid').length;
+  const pct = n => total === 0 ? 0 : Math.round(n/total*100);
+
+  const html = `
+    <div style="border:2px double #000;padding:20px;font-family:'Times New Roman',Georgia,serif;color:#000;">
+      <h2 style="text-align:center;">ROZA GIFT CORNER &amp; ELECTRIC</h2>
+      <h3 style="text-align:center;">SUMMARY REPORT</h3>
+      <p style="text-align:center;font-size:11px;">Generated: ${new Date().toLocaleString()}</p>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead><tr>
+          <th style="border:1px solid #000;padding:4px;">Description</th>
+          <th style="border:1px solid #000;padding:4px;">Count</th>
+          <th style="border:1px solid #000;padding:4px;">Amount</th>
+          <th style="border:1px solid #000;padding:4px;">Percentage</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="border:1px solid #000;padding:4px;">Total Customers</td><td style="border:1px solid #000;padding:4px;">${total}</td><td style="border:1px solid #000;padding:4px;">—</td><td style="border:1px solid #000;padding:4px;">100%</td></tr>
+          <tr><td style="border:1px solid #000;padding:4px;">Full Due</td><td style="border:1px solid #000;padding:4px;">${withDue}</td><td style="border:1px solid #000;padding:4px;text-align:right;">${formatMoneyOrZero(totalDue)}</td><td style="border:1px solid #000;padding:4px;">${pct(withDue)}%</td></tr>
+          <tr><td style="border:1px solid #000;padding:4px;">Partial Paid</td><td style="border:1px solid #000;padding:4px;">${partial}</td><td style="border:1px solid #000;padding:4px;">—</td><td style="border:1px solid #000;padding:4px;">${pct(partial)}%</td></tr>
+          <tr><td style="border:1px solid #000;padding:4px;">Fully Paid</td><td style="border:1px solid #000;padding:4px;">${paid}</td><td style="border:1px solid #000;padding:4px;">—</td><td style="border:1px solid #000;padding:4px;">${pct(paid)}%</td></tr>
+          <tr><td style="border:1px solid #000;padding:4px;">Total Starting Due</td><td style="border:1px solid #000;padding:4px;">—</td><td style="border:1px solid #000;padding:4px;text-align:right;">${formatMoneyOrZero(totalDue)}</td><td style="border:1px solid #000;padding:4px;">—</td></tr>
+          <tr><td style="border:1px solid #000;padding:4px;">Total Paid</td><td style="border:1px solid #000;padding:4px;">—</td><td style="border:1px solid #000;padding:4px;text-align:right;">${formatMoneyOrZero(totalPaid)}</td><td style="border:1px solid #000;padding:4px;">${totalDue ? Math.round(totalPaid/totalDue*100) : 0}%</td></tr>
+          <tr><td style="border:1px solid #000;padding:4px;">Net Outstanding</td><td style="border:1px solid #000;padding:4px;">—</td><td style="border:1px solid #000;padding:4px;text-align:right;">${formatMoneyOrZero(net)}</td><td style="border:1px solid #000;padding:4px;">${totalDue ? Math.round(net/totalDue*100) : 0}%</td></tr>
+        </tbody>
+      </table>
+      <p style="text-align:center;font-size:11px;margin-top:16px;">This is a computer-generated document. No signature required.</p>
+    </div>
+  `;
+  triggerPrint(html);
+}
+
+function printTxnStatement() {
+  const all = buildAllTransactions();
+  const filtered = filterTransactions(all);
+  const received = filtered.filter(t => txnTypeClass(t.type) === 'received').reduce((s,t) => s+t.amount, 0);
+  const dueAdded = filtered.filter(t => txnTypeClass(t.type) === 'due-added').reduce((s,t) => s+t.amount, 0);
+  const adjust = filtered.filter(t => txnTypeClass(t.type) === 'adjustment').reduce((s,t) => s+t.amount, 0);
+
+  const html = `
+    <div style="border:2px double #000;padding:20px;font-family:'Times New Roman',Georgia,serif;color:#000;">
+      <h2 style="text-align:center;">ROZA GIFT CORNER &amp; ELECTRIC</h2>
+      <h3 style="text-align:center;">TRANSACTION STATEMENT</h3>
+      <p style="text-align:center;font-size:11px;">Generated: ${new Date().toLocaleString()}</p>
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead><tr>
+          <th style="border:1px solid #000;padding:3px;">#</th>
+          <th style="border:1px solid #000;padding:3px;">Date</th>
+          <th style="border:1px solid #000;padding:3px;">Customer</th>
+          <th style="border:1px solid #000;padding:3px;">Type</th>
+          <th style="border:1px solid #000;padding:3px;">Amount</th>
+          <th style="border:1px solid #000;padding:3px;">Notes</th>
+        </tr></thead>
+        <tbody>
+          ${filtered.map((t,i) => `
+            <tr>
+              <td style="border:1px solid #000;padding:3px;">${i+1}</td>
+              <td style="border:1px solid #000;padding:3px;">${escapeHtml(t.date)}</td>
+              <td style="border:1px solid #000;padding:3px;">${escapeHtml(t.customerName)}</td>
+              <td style="border:1px solid #000;padding:3px;">${escapeHtml(t.type)}</td>
+              <td style="border:1px solid #000;padding:3px;text-align:right;">${formatMoneyOrZero(t.amount)}</td>
+              <td style="border:1px solid #000;padding:3px;">${escapeHtml(t.note||'')}</td>
+            </tr>
+          `).join('') || '<tr><td colspan="6" style="text-align:center;border:1px solid #000;padding:8px;">No transactions</td></tr>'}
+        </tbody>
+      </table>
+      <table style="width:100%;border-collapse:collapse;margin-top:12px;font-size:12px;">
+        <tr><td style="border:1px solid #000;padding:5px;font-weight:700;">Total Transactions</td><td style="border:1px solid #000;padding:5px;text-align:right;">${filtered.length}</td></tr>
+        <tr><td style="border:1px solid #000;padding:5px;font-weight:700;">Payments Received</td><td style="border:1px solid #000;padding:5px;text-align:right;">${formatMoneyOrZero(received)}</td></tr>
+        <tr><td style="border:1px solid #000;padding:5px;font-weight:700;">Due Added</td><td style="border:1px solid #000;padding:5px;text-align:right;">${formatMoneyOrZero(dueAdded)}</td></tr>
+        <tr><td style="border:1px solid #000;padding:5px;font-weight:700;">Adjustments</td><td style="border:1px solid #000;padding:5px;text-align:right;">${formatMoneyOrZero(adjust)}</td></tr>
+      </table>
+    </div>
+  `;
+  triggerPrint(html);
+}
+
+function triggerPrint(html) {
+  const area = $('printArea');
+  area.innerHTML = html;
+  void area.offsetHeight;
+  setTimeout(() => {
+    try {
+      if (typeof window.print === 'function') {
+        window.print();
+      } else {
+        showToast('Printing not supported on this device.', 'error');
+      }
+    } catch (e) {
+      showToast('Print failed: ' + e.message, 'error');
+    }
+  }, 200);
+}
+
+/* ============================================================
+   PASSWORD PROMPT
+   ============================================================ */
+function promptPassword(title, correctPwd, onCorrect) {
+  const body = `
+    <div class="form-group">
+      <label>Password <span class="req">*</span></label>
+      <input type="password" id="pwdInput" autocomplete="off">
+      <div class="password-error" id="pwdErr">Incorrect password.</div>
+    </div>
+  `;
+  const footer = `
+    <button class="btn btn-ghost" id="pwdCancel">Cancel</button>
+    <button class="btn btn-primary" id="pwdSubmit">Submit</button>
+  `;
+  openModal(title, body, footer);
+
+  $('pwdCancel').addEventListener('click', closeModal);
+  $('pwdSubmit').addEventListener('click', () => {
+    if ($('pwdInput').value === correctPwd) {
+      closeModal();
+      onCorrect();
+    } else {
+      $('pwdErr').classList.add('visible');
+    }
+  });
+  $('pwdInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') $('pwdSubmit').click();
+  });
+  setTimeout(() => { const el = $('pwdInput'); if (el) el.focus(); }, 300);
+}
+
+/* ============================================================
+   BACKUP / RESTORE
+   ============================================================ */
+function downloadBackup() {
+  const data = JSON.stringify(customers, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `RGCE_SparkDesk_Backup_${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Backup downloaded.', 'success');
+}
+function restoreBackup() { $('restoreFileInput').click(); }
+
+/* ============================================================
+   CLEAR BY SOURCE
+   ============================================================ */
+function openClearBySourceModal() {
+  const sources = [...new Set(customers.map(c => c.source).filter(Boolean))].sort();
+  if (sources.length === 0) { showToast('No sources found.', 'warning'); return; }
+  const body = `
+    <div class="form-group">
+      <label style="display:flex;align-items:center;font-weight:500;">
+        <input type="checkbox" id="srcAll" style="width:auto;margin-right:8px;"> Select All
+      </label>
+    </div>
+    ${sources.map(s => `
+      <div class="form-group">
+        <label style="display:flex;align-items:center;font-weight:500;">
+          <input type="checkbox" class="src-checkbox" value="${escapeHtml(s)}" style="width:auto;margin-right:8px;">
+          Source ${escapeHtml(s)}
+        </label>
+      </div>
+    `).join('')}
+    <div id="srcPreview" class="info-box"></div>
+  `;
+  const footer = `
+    <button class="btn btn-ghost" id="srcCancel">Cancel</button>
+    <button class="btn btn-danger" id="srcClear">Clear Selected</button>
+  `;
+  openModal('Clear Amounts by Source', body, footer);
+
+  function update() {
+    const checked = [...document.querySelectorAll('.src-checkbox:checked')].map(cb => cb.value);
+    const affected = customers.filter(c => checked.includes(c.source));
+    const due = affected.reduce((s,c) => s + (c.due||0), 0);
+    const paid = affected.reduce((s,c) => s + (c.paid||0), 0);
+    $('srcPreview').textContent = `${affected.length} customers affected — Due: ${formatMoneyOrZero(due)}, Paid: ${formatMoneyOrZero(paid)}`;
+  }
+  document.querySelectorAll('.src-checkbox').forEach(cb => cb.addEventListener('change', update));
+  $('srcAll').addEventListener('change', (e) => {
+    document.querySelectorAll('.src-checkbox').forEach(cb => cb.checked = e.target.checked);
+    update();
+  });
+  update();
+
+  $('srcCancel').addEventListener('click', closeModal);
+  $('srcClear').addEventListener('click', () => {
+    const checked = [...document.querySelectorAll('.src-checkbox:checked')].map(cb => cb.value);
+    if (checked.length === 0) { showToast('Select at least one source.', 'warning'); return; }
+    customers.forEach(c => {
+      if (checked.includes(c.source)) {
+        c.due = 0; c.paid = 0; c.transactionHistory = [];
+        markCustomerChanged(c.id);
+      }
+    });
+    saveData(); renderCustomers(); closeModal();
+    showToast('Amounts cleared for selected sources.', 'success');
+  });
+}
+
+/* ============================================================
+   TELEGRAM SETUP
+   ============================================================ */
+function openTelegramSetup() {
+  const token = localStorage.getItem(TG_TOKEN_KEY) || TELEGRAM_BOT_TOKEN;
+  const chat = localStorage.getItem(TG_CHAT_KEY) || '';
+  const tgSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>`;
+  const body = `
+    <div class="info-box">
+      <strong>Bot ready:</strong> ${TELEGRAM_BOT_HANDLE}<br>
+      <a class="bot-link-pill" href="${TELEGRAM_BOT_LINK}" target="_blank" rel="noopener">
+        ${tgSvg} Open @RGCE_andro_bot
+      </a>
+      <div style="margin-top:8px;font-size:12px;">
+        1. Tap the bot link above and press <strong>Start</strong>.<br>
+        2. Then tap <strong>Auto-detect Chat ID</strong> below.
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Bot Token</label>
+      <input type="text" id="tgToken" value="${escapeHtml(token)}" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Chat ID</label>
+      <input type="text" id="tgChat" value="${escapeHtml(chat)}" autocomplete="off" placeholder="Auto-detect or paste manually">
+    </div>
+    <button type="button" class="btn btn-outline btn-block" id="tgDetect" style="margin-bottom:8px;">
+      <i class="fas fa-magic"></i> Auto-detect Chat ID
+    </button>
+    <a href="${TELEGRAM_BOT_LINK}" target="_blank" rel="noopener" class="btn btn-primary btn-block" style="text-decoration:none;">
+      ${tgSvg} Open Bot Chat
+    </a>
+    <div id="tgMsg" style="margin-top:10px;"></div>
+  `;
+  const footer = `
+    <button class="btn btn-ghost" id="tgCancel">Cancel</button>
+    <button class="btn btn-primary" id="tgSave">Save</button>
+  `;
+  openModal('Telegram Backup Setup', body, footer);
+
+  $('tgCancel').addEventListener('click', closeModal);
+  $('tgDetect').addEventListener('click', async () => {
+    const t = $('tgToken').value.trim() || TELEGRAM_BOT_TOKEN;
+    if (!t) { showToast('Enter a token first.', 'error'); return; }
+    $('tgMsg').innerHTML = '<div class="info-box">Checking for messages…</div>';
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${t}/getUpdates`);
+      const data = await res.json();
+      if (data.result && data.result.length > 0) {
+        let id = null;
+        for (let i = data.result.length - 1; i >= 0; i--) {
+          const upd = data.result[i];
+          if (upd.message && upd.message.chat && upd.message.chat.id) {
+            id = upd.message.chat.id; break;
+          }
+        }
+        if (id) {
+          $('tgChat').value = id;
+          $('tgMsg').innerHTML = `<div class="info-box">✅ Chat ID detected: <strong>${id}</strong></div>`;
+        } else {
+          $('tgMsg').innerHTML = '<div class="info-box-warning">No message found. Send /start to @RGCE_andro_bot first.</div>';
+        }
+      } else {
+        $('tgMsg').innerHTML = '<div class="info-box-warning">No updates. Open <a href="' + TELEGRAM_BOT_LINK + '" target="_blank">@RGCE_andro_bot</a>, press Start, then retry.</div>';
+      }
+    } catch (e) {
+      $('tgMsg').innerHTML = `<div class="warning-box">Error: ${escapeHtml(e.message)}</div>`;
+    }
+  });
+  $('tgSave').addEventListener('click', () => {
+    localStorage.setItem(TG_TOKEN_KEY, $('tgToken').value.trim() || TELEGRAM_BOT_TOKEN);
+    localStorage.setItem(TG_CHAT_KEY, $('tgChat').value.trim());
+    closeModal();
+    updateTgStatus();
+    showToast('Telegram settings saved.', 'success');
+  });
+}
+
+/* ============================================================
+   ADMIN PANEL
+   ============================================================ */
+function openAdminPanel() {
+  const tgSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>`;
+  const body = `
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead><tr>
+        <th style="text-align:left;padding:6px;border-bottom:1px solid var(--border);">Action</th>
+        <th style="text-align:right;padding:6px;border-bottom:1px solid var(--border);">Password</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:6px;">Clear Notes</td><td style="text-align:right;padding:6px;font-weight:700;">3508</td></tr>
+        <tr><td style="padding:6px;">Clear Amounts</td><td style="text-align:right;padding:6px;font-weight:700;">3508</td></tr>
+        <tr><td style="padding:6px;">Summary Report</td><td style="text-align:right;padding:6px;font-weight:700;">3508</td></tr>
+        <tr><td style="padding:6px;">Delete Customer</td><td style="text-align:right;padding:6px;font-weight:700;">3508</td></tr>
+        <tr><td style="padding:6px;">Backup / Drive</td><td style="text-align:right;padding:6px;font-weight:700;">3508</td></tr>
+        <tr><td style="padding:6px;">Clear ALL Data</td><td style="text-align:right;padding:6px;font-weight:700;">1812693380</td></tr>
+        <tr><td style="padding:6px;">Master Admin</td><td style="text-align:right;padding:6px;font-weight:700;">fmkk</td></tr>
+      </tbody>
+    </table>
+    <div class="info-box" style="margin-top:14px;">
+      <strong>Telegram Bot:</strong> ${TELEGRAM_BOT_HANDLE}<br>
+      <a class="bot-link-pill" href="${TELEGRAM_BOT_LINK}" target="_blank" rel="noopener">
+        ${tgSvg} Open Bot
+      </a>
+    </div>
+  `;
+  openModal('Admin Panel', body, '<button class="btn btn-primary btn-block" id="adminClose">Close</button>');
+  $('adminClose').addEventListener('click', closeModal);
+}
+
+/* ============================================================
+   EVENT BINDINGS
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+
+  loadSettings();
+  loadData();
+  pageSize = parseInt(localStorage.getItem('rgce_page_size') || pageSize.toString(), 10);
+  $('pageSizeSelect').value = pageSize;
+  $('setPageSize').value = pageSize;
+  $('darkToggle').checked = document.body.classList.contains('dark');
+
+  // initialize header
+  $('headerTitle').textContent = 'RGCE SparkDesk';
+  $('headerSub').textContent = 'Customer Register';
+
+  refreshAddressFilter();
+  renderCustomers();
+  renderReports();
+  updateTgStatus();
+  bindModalClose();
+
+  const lastSync = localStorage.getItem(LAST_SYNC_KEY);
+  if (lastSync) {
+    $('sheetSyncSub').textContent = 'Last sync: ' + new Date(lastSync).toLocaleTimeString();
+  }
+
+  if (document.body.classList.contains('dark')) {
+    $('hdrDark').innerHTML = '<i class="fas fa-sun"></i>';
+  }
+
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchTab(n.dataset.tab);
+    });
+  });
+
+  $('fabAdd').addEventListener('click', openAddModal);
+
+  $('globalSearch').addEventListener('input', () => { currentPage = 1; renderCustomers(); });
+  $('searchClear').addEventListener('click', () => {
+    $('globalSearch').value = '';
+    currentPage = 1;
+    renderCustomers();
+  });
+
+  $('filterToggle').addEventListener('click', () => {
+    $('filterPanel').classList.toggle('open');
+    $('filterToggle').classList.toggle('active');
+  });
+  $('filterAddress').addEventListener('change', () => { currentPage = 1; renderCustomers(); });
+  $('filterStatus').addEventListener('change', () => { currentPage = 1; renderCustomers(); });
+  $('filterSource').addEventListener('change', () => { currentPage = 1; renderCustomers(); });
+  $('sortSelect').addEventListener('change', (e) => {
+    sortColumn = e.target.value === 'sl' ? null : e.target.value;
+    sortDirection = 'asc';
+    renderCustomers();
+  });
+  $('filterClear').addEventListener('click', () => {
+    $('globalSearch').value = '';
+    $('filterAddress').value = '';
+    $('filterStatus').value = '';
+    $('filterSource').value = '';
+    $('sortSelect').value = 'sl';
+    sortColumn = null;
+    currentPage = 1;
+    renderCustomers();
+  });
+  $('filterPrint').addEventListener('click', printFilteredReport);
+
+  $('pageSizeSelect').addEventListener('change', (e) => {
+    pageSize = parseInt(e.target.value, 10);
+    localStorage.setItem('rgce_page_size', pageSize.toString());
+    $('setPageSize').value = pageSize;
+    currentPage = 1;
+    renderCustomers();
+  });
+  $('setPageSize').addEventListener('change', (e) => {
+    pageSize = parseInt(e.target.value, 10);
+    localStorage.setItem('rgce_page_size', pageSize.toString());
+    $('pageSizeSelect').value = pageSize;
+    currentPage = 1;
+    renderCustomers();
+  });
+
+  function toggleDark() {
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    $('darkToggle').checked = isDark;
+    $('hdrDark').innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    saveSettings();
+  }
+  $('hdrDark').addEventListener('click', (e) => { e.preventDefault(); toggleDark(); });
+  $('setDark').addEventListener('click', (e) => {
+    if (e.target.tagName !== 'INPUT') toggleDark();
+  });
+  $('darkToggle').addEventListener('change', () => {
+    document.body.classList.toggle('dark', $('darkToggle').checked);
+    $('hdrDark').innerHTML = $('darkToggle').checked ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    saveSettings();
+  });
+
+  $('hdrTelegram').addEventListener('click', (e) => {
+    e.preventDefault();
+    sendTelegramBackup();
+  });
+
+  $('hdrSync').addEventListener('click', () => syncToGoogleSheets(false));
+
+  $('txnSearch').addEventListener('input', (e) => { txnFilters.search = e.target.value; renderTransactions(); });
+  $('txnRangeSeg').querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $('txnRangeSeg').querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      txnFilters.range = btn.dataset.range;
+      renderTransactions();
+    });
+  });
+  $('txnTypeSeg').querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $('txnTypeSeg').querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      txnFilters.type = btn.dataset.type;
+      renderTransactions();
+    });
+  });
+  $('txnRefreshBtn').addEventListener('click', async () => {
+    await fetchTxnFromSheet(false);
+    renderTransactions();
+    showToast('Refreshed.', 'success');
+  });
+  $('txnUploadBtn').addEventListener('click', uploadAllLocalTxns);
+
+  document.querySelectorAll('[data-report]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const type = btn.dataset.report;
+      if (type === 'summary') printSummaryReport();
+      if (type === 'filtered') printFilteredReport();
+      if (type === 'manual') printManualReport();
+      if (type === 'txn') printTxnStatement();
+    });
+  });
+
+  // ★ LIVE SHEET VIEWERS
+  $('toolMainSheetLive').addEventListener('click', () => openLiveSheet('main'));
+  $('toolTxnSheetLive').addEventListener('click', () => openLiveSheet('txn'));
+  $('toolBothSheetsLive').addEventListener('click', () => openLiveSheet('both'));
+
+  $('toolBackup').addEventListener('click', downloadBackup);
+  $('toolRestore').addEventListener('click', () => promptPassword('Enter password to restore', PWD.backup, restoreBackup));
+  $('toolDrive').addEventListener('click', () => promptPassword('Enter password for Drive', PWD.backup, () => { window.open(GOOGLE_DRIVE_URL, '_blank'); }));
+  $('toolTgSend').addEventListener('click', sendTelegramBackup);
+  $('toolTgSetup').addEventListener('click', openTelegramSetup);
+  $('toolTgOpen').addEventListener('click', () => { window.open(TELEGRAM_BOT_LINK, '_blank'); });
+  $('toolSheetPush').addEventListener('click', () => syncToGoogleSheets(false));
+  $('toolSheetPull').addEventListener('click', () => promptPassword('Enter password to pull data', PWD.summary, pullFromGoogleSheets));
+  $('toolSheetTxn').addEventListener('click', uploadAllLocalTxns);
+  $('toolSheetOpen').addEventListener('click', () => { window.open(SHEET_EDIT_URL, '_blank'); });
+  $('toolTxnSheetOpen').addEventListener('click', () => { window.open(TXN_SHEET_EDIT_URL, '_blank'); });
+  $('toolClearNotes').addEventListener('click', () => promptPassword('Enter password to clear notes', PWD.clearNotes, () => {
+    customers.forEach(c => c.note = '');
+    saveData(); renderCustomers(); showToast('All notes cleared.', 'success');
+  }));
+  $('toolClearAmounts').addEventListener('click', () => promptPassword('Enter password to clear amounts', PWD.clearAmounts, () => {
+    if (!confirm('Clear ALL due and paid amounts from every customer?')) return;
+    customers.forEach(c => { c.due = 0; c.paid = 0; c.transactionHistory = []; });
+    saveData(); renderCustomers(); showToast('All amounts cleared.', 'success');
+  }));
+  $('toolClearSource').addEventListener('click', () => promptPassword('Enter password', PWD.clearAmounts, openClearBySourceModal));
+  $('toolClearAll').addEventListener('click', () => promptPassword('Enter master password', PWD.clearAll, () => {
+    if (!confirm('DELETE ALL DATA? This cannot be undone!')) return;
+    if (!confirm('Are you ABSOLUTELY sure?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    customers = [];
+    saveData();
+    refreshAddressFilter();
+    renderCustomers();
+    renderReports();
+    showToast('All data cleared.', 'success');
+  }));
+
+  $('setShop').addEventListener('click', () => {
+    openModal('Shop Details', `
+      <p style="margin-bottom:8px;"><strong>Proprietor:</strong> Md. Ziaur Rahman</p>
+      <p style="margin-bottom:8px;"><strong>Address:</strong> Moshjid Market, Naohata Mor, Mohadevpur, Naogaon</p>
+      <p style="margin-bottom:8px;"><strong>Contact:</strong> +8801715986646</p>
+      <p style="margin-bottom:8px;"><strong>Hours:</strong> 8:00 AM – 10:00 PM</p>
+      <p><strong>Business:</strong> Gifts / Electrical / Cosmetics</p>
+    `, '<button class="btn btn-primary btn-block" id="shopClose">Close</button>');
+    $('shopClose').addEventListener('click', closeModal);
+  });
+  $('setDev').addEventListener('click', () => {
+    openModal('Developer Info', `
+      <p style="margin-bottom:8px;"><strong>Farhan Tanzid Shiyam</strong></p>
+      <p style="margin-bottom:8px;">Software Developer &amp; App Owner</p>
+      <p style="margin-bottom:8px;">Email: farhantanzidshiyam@gmail.com</p>
+      <p style="margin-bottom:8px;">WhatsApp: +880131932189</p>
+      <p style="margin-bottom:8px;">Facebook: <a href="https://web.facebook.com/farhantanzidshiyam" target="_blank">facebook.com/farhantanzidshiyam</a></p>
+      <p><strong>RGCE SparkDesk v1.4 — Android</strong></p>
+    `, '<button class="btn btn-primary btn-block" id="devClose">Close</button>');
+    $('devClose').addEventListener('click', closeModal);
+  });
+  $('setHelp').addEventListener('click', () => {
+    openModal('Help', `
+      <p style="margin-bottom:8px;">Use the bottom tabs to navigate:</p>
+      <ul style="padding-left:20px;line-height:1.8;font-size:13px;">
+        <li><strong>Customers</strong> — view and manage all customers</li>
+        <li><strong>History</strong> — see every transaction</li>
+        <li><strong>Reports</strong> — summary & printed reports</li>
+        <li><strong>Tools</strong> — backup, sync & maintenance</li>
+        <li><strong>Settings</strong> — preferences & info</li>
+      </ul>
+      <p style="margin-top:10px;">All data is stored locally. Use backup tools regularly!</p>
+      <p style="margin-top:10px;">Telegram Bot: <a href="${TELEGRAM_BOT_LINK}" target="_blank">${TELEGRAM_BOT_HANDLE}</a></p>
+    `, '<button class="btn btn-primary btn-block" id="helpClose">Close</button>');
+    $('helpClose').addEventListener('click', closeModal);
+  });
+  $('setAdmin').addEventListener('click', () => promptPassword('Enter master password', PWD.master, openAdminPanel));
+
+  $('restoreFileInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        let parsed = JSON.parse(ev.target.result);
+        if (!Array.isArray(parsed) && parsed.customers) parsed = parsed.customers;
+        if (!Array.isArray(parsed) || !parsed.every(c => c.name)) throw new Error('Invalid format');
+        if (!confirm(`Found ${parsed.length} customers. Replace ALL local data?`)) return;
+        const seenIds = new Set();
+        customers = parsed.map((c, idx) => {
+          let id = normalizeId(c.id);
+          let tries = 0;
+          while (seenIds.has(id) && tries < 50) {
+            id = id + '-' + Math.floor(Math.random() * 1000);
+            tries++;
+          }
+          if (seenIds.has(id)) id = generateId() + '-' + idx;
+          seenIds.add(id);
+          return {
+            id: id,
+            dateAdded: c.dateAdded || todayDDMMYYYY(),
+            name: c.name,
+            phone: c.phone || '',
+            address: c.address || '',
+            due: Math.max(0, parseInt(c.due, 10) || 0),
+            paid: Math.max(0, parseInt(c.paid, 10) || 0),
+            source: c.source || '',
+            note: c.note || '',
+            transactionHistory: c.transactionHistory || []
+          };
+        });
+        saveData();
+        refreshAddressFilter();
+        renderCustomers();
+        renderReports();
+        showToast(`✅ ${customers.length} customers restored.`, 'success');
+      } catch (err) {
+        showToast('Invalid backup file.', 'error');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  setTimeout(() => showToast('Welcome to RGCE SparkDesk!', 'info'), 700);
+});
+
+document.addEventListener('contextmenu', (e) => {
+  const t = (e.target.tagName || '').toLowerCase();
+  if (t === 'input' || t === 'textarea' || t === 'select' || t === 'a') return;
+  e.preventDefault();
+});
+</script>
+</body>
+</html>
