@@ -89,7 +89,7 @@ const draw = async () => {
   document.documentElement.lang = cur; $('bl').textContent = cur === 'bn' ? 'English' : '\u09AC\u09BE\u0982\u09B2\u09BE'; $('bp').textContent = rl('vPrint');
   if (!data) return;
   await loadQR(); const url = location.origin + location.pathname + '?r=' + id;
-  const rows = data.rows.map(a => ({ name: a[0], phone: a[1], addr: a[2], src: a[3], due: +a[4] || 0, paid: +a[5] || 0, bal: Math.max(0, (+a[4] || 0) - (+a[5] || 0)) }));
+  const rows = data.rows.map(a => ({ name: a.n, phone: a.p, addr: a.a, src: a.s, due: +a.d || 0, paid: +a.u || 0, bal: Math.max(0, (+a.d || 0) - (+a.u || 0)) }));
   $('out').innerHTML = reportHtml({ typeId: data.typeId, g: data.g || '', rows, notes: data.notes || [], gen: data.gen, no: data.no, url, qr: qrSvg(url) });
   document.title = rl('ty_' + data.typeId) + ' - ' + SHOP_NAME;
 };
